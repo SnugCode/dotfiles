@@ -1,0 +1,72 @@
+{
+    //Positioning
+    // "layer": "top", // Waybar at top layer
+    // "position": "bottom", // Waybar position (top|bottom|left|right)
+    "height": 25,
+    // "width": 1280, // Waybar width
+    "spacing": 4, // Gaps between modules (4px)
+
+    // Module Order
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["network", "bluetooth", "custom/pipewire", "battery"],
+    
+    // Module Configuration
+    "hyprland/workspaces": {
+         "disable-scroll": true, 
+         "format": "{icon}",
+         "format-icons": {
+             "1": "",
+             "2": "",
+             "3": "",
+	     "4": "󰉋",
+          }
+    },
+    "clock": {
+        "timezone": "Australia/Melbourne",
+	"format": "{:%H:%M | %d %b %Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}"
+    },
+    "network": {
+        "format-wifi": "",
+        "format-ethernet": "{ipaddr}/{cidr} ",
+        "format-disconnected": "Disconnected ⚠", 
+	"tooltip-format": "{essid}"
+    },
+    "bluetooth": {
+        "format": "󰂲",
+        "format-on": "{icon}",
+        "format-off": "{icon}", 
+        "format-connected":"{icon}",
+        "format-icons":{
+            "on":"󰂯",
+            "off": "󰂲",
+            "connected": "󰂱",
+            },
+        "on-click": "blueman-manager",
+        "tooltip-format-connected":"{device_enumerate}"
+    },
+    "custom/pipewire": {
+        "format": "",
+        "return-type": "json",
+        "signal": 8,
+        "interval": "once",
+        "format-icons": {
+            "mute": "", 
+	    "default": ["", "", ""],
+	},
+	"exec": "pw-volume status"
+    },
+    "battery": {
+        "bat": "BAT0",
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}",
+        "format-icons": ["", "", "", "", ""], 
+	"tooltip-format": "{capacity}%"
+    }
+}
