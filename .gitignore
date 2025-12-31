@@ -1,5 +1,5 @@
 mozilla/ 
-dolphinrc/ 
+dolphinrc 
 pulse/ 
 kitty/ 
 rofi/ 
@@ -10,5 +10,5 @@ dconf/
 go/
 yay/
 session/
-trashrc/
-baloofileinformationrc/
+trashrc
+baloofileinformationrc
