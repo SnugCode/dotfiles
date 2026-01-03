@@ -10,7 +10,7 @@
     // Module Order
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/spotify", "network", "bluetooth", "custom/pipewire", "battery"],
+    "modules-right": ["custom/media", "network", "bluetooth", "custom/pipewire", "battery"],
     
     // Module Configuration
     "hyprland/workspaces": {
@@ -20,11 +20,12 @@
             "1": "",
             "2": "",
             "3": "",
-	    "4": "󰉋",
+	        "4": "󰉋",
+            "5": ""
         },
 	"persistent-workspaces": {
-	     "*": 4,
-	}
+	     "*": 5
+	    }
     },
     "hyprland/window": {
     	"format": "{}",
@@ -36,20 +37,23 @@
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
         "format-alt": "{:%Y-%m-%d}"
     },
-    "custom/spotify": {
-    	"exec": "/usr/bin/python3 /full/path/to/mediaplayer.py --player spotify",
-    	"format": "{}  ",
-    	"return-type": "json",
-    	"on-click": "playerctl play-pause",
-    	"on-scroll-up": "playerctl next",
-    	"on-scroll-down": "playerctl previous"
+    "custom/media": {
+        "format": "{icon} {text}",
+        "return-type": "json",
+        "max-length": 40,
+        "format-icons": {
+            "spotify": "",
+            "default": "🎜"
+        },
+        "escape": true,
+        "exec": "~/.config/waybar/apps/mediaplayer.py 2> /dev/null"
     },
     "network": {
         "format-wifi": "",
         "format-ethernet": "{ipaddr}/{cidr} ",
         "format-disconnected": "Disconnected ⚠", 
-	"tooltip-format": "{essid}", 
-	"on-click": "kitty -e nmtui-connect"
+	    "tooltip-format": "{essid}", 
+	    "on-click": "kitty -e nmtui-connect"
     },
     "bluetooth": {
         "format": "󰂲",
@@ -59,22 +63,21 @@
         "format-icons":{
             "on":"󰂯",
             "off": "󰂲",
-            "connected": "󰂱",
-            },
+            "connected": "󰂱"
+        },
         "on-click": "blueman-manager",
         "tooltip-format-connected":"{device_enumerate}"
     },
     "custom/pipewire": {
-        "exec": "~/.config/waybar/scripts/pipewire.sh",
-	"format": "",
+	    "format": "",
         "return-type": "json",
         "signal": 8,
         "interval": "once",
         "format-icons": {
             "mute": "", 
-	    "default": ["", "", ""],
-	},
-	"exec": "pw-volume status"
+	    "default": ["", "", ""]
+	    },
+	    "exec": "pw-volume status"
     },
     "battery": {
         "bat": "BAT0",

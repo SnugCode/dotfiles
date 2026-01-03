@@ -29,10 +29,18 @@ window#waybar {
 	margin-left: 10px;
 }
 
-.custom-spotify {
-	padding: 0 10px; 
-	margin: 4px;
-	color: white;
+#custom-media {
+    background-color: #66cc99;
+    color: #2a5c45;
+    min-width: 100px;
+}
+
+#custom-media.custom-spotify {
+    background-color: #66cc99;
+}
+
+#custom-media.custom-vlc {
+    background-color: #ffa000;
 }
 
 #battery icon {
