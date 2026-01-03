@@ -46,7 +46,8 @@
             "default": "🎜"
         },
         "escape": true,
-        "exec": "~/.config/waybar/apps/mediaplayer.py 2> /dev/null"
+        "exec": "~/.config/waybar/apps/mediaplayer.py 2> /dev/null", 
+        "on-click": "playerctl -p spotify play-pause"
     },
     "network": {
         "format-wifi": "",

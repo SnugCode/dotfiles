@@ -20,7 +20,8 @@ window#waybar {
 
 /* Right Modules */
 
-.modules-right, 
+.modules-right,
+#custom-media, 
 #network,
 #bluetooth,
 #pipewire,
@@ -30,17 +31,17 @@ window#waybar {
 }
 
 #custom-media {
-    background-color: #66cc99;
-    color: #2a5c45;
-    min-width: 100px;
+	padding: 0 8px;
+	min-width: 100px;
+
+	background-color: transparent;
+	color: #ffffff;
 }
 
-#custom-media.custom-spotify {
-    background-color: #66cc99;
-}
-
+#custom-media.custom-spotify,
 #custom-media.custom-vlc {
-    background-color: #ffa000;
+	background-color: transparent;
+	color: #ffffff;
 }
 
 #battery icon {
