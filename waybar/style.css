@@ -29,6 +29,12 @@ window#waybar {
 	margin-left: 10px;
 }
 
+.custom-spotify {
+	padding: 0 10px; 
+	margin: 4px;
+	color: white;
+}
+
 #battery icon {
 	color: red;
 }
