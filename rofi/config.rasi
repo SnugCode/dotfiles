@@ -1,16 +1,86 @@
 configuration {
-  modes: [ combi ];
-  combi-modes: [ window, drun, run ];
+    show-icons: true;
+    drun-display-format: "{name}";
 }
 
-@theme "gruvbox-light"
+* {
+    font: "0xProto Nerd Font Mono 12";
+}
+
+window {
+    width: 900px;
+    height: 500px;
+}
+
+mainbox {
+    orientation: horizontal;
+    spacing: 0;
+    children: [ leftbox, listbox ];
+}
+
+/* LEFT IMAGE PANEL */
+leftbox {
+    width: 35%;
+    background-image: url("~/Images/AdeptusMechanicus-Logo.jpg");
+    padding: 10px 20px 100px 20px;
+    children: [ inputbar ];
+}
+
+/* SEARCH */
+inputbar {
+    padding: 10px;
+    background-color: #00000088;
+    border-radius: 8px;
+}
+
+/* RIGHT APP LIST */
+listbox {
+    width: 65%;
+    padding: 20px;
+    background-color: #1e1e2ecc;
+    children: [ listview ];
+}
+
+prompt {
+    enabled: false;
+}
 
 entry {
-    placeholder: "Type Here";
+    placeholder: "Search…";
+    text-color: #ffffff;
 }
 
+/* RIGHT APP LIST */
+
+listview {
+    columns: 1;
+    spacing: 6px;
+    scrollbar: true;
+}
+
+/* APP ENTRIES */
 element {
-    orientation: horizontal; 
-    children: [element-text, element-icon];
-    spacing: 5px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+element normal.normal {
+    background-color: transparent;
+}
+
+element selected.normal {
+    background-color: #313244;
+}
+
+/* TEXT LEFT */
+element-text {
+    horizontal-align: 0.0;
+    vertical-align: 0.5;
+    text-color: #cdd6f4;
+}
+
+/* ICON RIGHT */
+element-icon {
+    horizontal-align: 1.0;
+    size: 2.5em;
 }
