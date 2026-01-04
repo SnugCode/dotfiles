@@ -1,0 +1,16 @@
+configuration {
+  modes: [ combi ];
+  combi-modes: [ window, drun, run ];
+}
+
+@theme "gruvbox-light"
+
+entry {
+    placeholder: "Type Here";
+}
+
+element {
+    orientation: horizontal; 
+    children: [element-text, element-icon];
+    spacing: 5px;
+}
