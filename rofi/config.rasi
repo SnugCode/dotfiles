@@ -1,86 +1,71 @@
 configuration {
-    show-icons: true;
-    drun-display-format: "{name}";
-}
+    modes: [ combi ];
+    combi-modes: [ window, drun, run ];
 
-* {
-    font: "0xProto Nerd Font Mono 12";
+    font: "0xProto Nerd Font Mono";
+    
+    display-run: "Execute";
+
+    width: 600px; 
+    height: 400px;
 }
 
 window {
-    width: 900px;
-    height: 500px;
+    background-color: transparent;
+    padding: 0px;
+    children: [ mainbox ];
 }
 
-mainbox {
+mainbox{
     orientation: horizontal;
-    spacing: 0;
-    children: [ leftbox, listbox ];
+    children: [ "left-column", "listview" ]; 
+
+    width: 100%; 
+    height: 100%;
 }
 
-/* LEFT IMAGE PANEL */
-leftbox {
-    width: 35%;
+left-column{
+    orientation: vertical;
+    width: 50%;
+
     background-image: url("~/Images/AdeptusMechanicus-Logo.jpg");
-    padding: 10px 20px 100px 20px;
-    children: [ inputbar ];
-}
+    background-color: #000000;
 
-/* SEARCH */
-inputbar {
-    padding: 10px;
-    background-color: #00000088;
-    border-radius: 8px;
-}
-
-/* RIGHT APP LIST */
-listbox {
-    width: 65%;
+    children: [ "inputbar" ];
     padding: 20px;
-    background-color: #1e1e2ecc;
-    children: [ listview ];
+}
+
+inputbar{
+    text-color: #ffffff;
+    border-radius: 5 px;
+    padding: 8px;
+}
+
+listview{
+    width: 50%;
+    background-color: #000000;
+    lines: 5;
 }
 
 prompt {
-    enabled: false;
-}
-
-entry {
-    placeholder: "Search…";
     text-color: #ffffff;
 }
 
-/* RIGHT APP LIST */
-
-listview {
-    columns: 1;
-    spacing: 6px;
-    scrollbar: true;
+entry {
+    placeholder: "";
 }
 
-/* APP ENTRIES */
 element {
-    padding: 10px;
-    border-radius: 8px;
+    orientation: horizontal;
+    spacing: 5px;
+
+    children: [element-text, element-icon];
 }
 
-element normal.normal {
-    background-color: transparent;
-}
-
-element selected.normal {
-    background-color: #313244;
-}
-
-/* TEXT LEFT */
 element-text {
-    horizontal-align: 0.0;
     vertical-align: 0.5;
-    text-color: #cdd6f4;
 }
 
-/* ICON RIGHT */
-element-icon {
-    horizontal-align: 1.0;
+element-icon{
     size: 2.5em;
 }
