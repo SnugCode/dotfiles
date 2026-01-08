@@ -87,8 +87,10 @@
             "warning": 30,
             "critical": 15
         },
+        "full-at": 80,
         "format": "{icon}",
-        "format-icons": ["", "", "", "", ""], 
-	"tooltip-format": "{capacity}%"
+        "format-icons": ["", "", "", "", ""],
+        "format-plugged": "", 
+	    "tooltip-format": "{capacity}%"
     }
 }
