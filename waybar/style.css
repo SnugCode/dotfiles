@@ -20,50 +20,75 @@ window#waybar {
 
 /* Workspaces */
 
-#workspaces {
-	margin-left: 8px;
-}
-
-#workspaces button {
-	min-width: 22px;
+#custom-workspaces {
+	min-width: 126px;
 	min-height: 22px;
-	margin: 0 2px;
+	margin-left: 8px;
 	padding: 0;
 	border-radius: 999px;
-	background-color: transparent;
+	background-image: url("assets/workspace-circle.svg");
+	background-repeat: no-repeat;
+	background-size: 22px 22px;
+	background-position: 0px center;
 	color: #ffffff;
-}
-
-#workspaces button label {
-	min-width: 22px;
-	min-height: 22px;
-	padding: 0;
-	margin: 0;
-	font-size: 15px;
 	font-family: "0xProto Nerd Font Mono";
-	-gtk-icon-transform: translate(0, 0);
+	font-size: 15px;
+	transition: background-position 220ms ease;
 }
 
-#workspaces button.active {
-	background-color: #ffffff;
-	color: #000000;
+#custom-workspaces.workspace-1 {
+	background-position: 0px center;
 }
 
-#workspaces button.active label {
-	color: #000000;
+#custom-workspaces.workspace-2 {
+	background-position: 26px center;
 }
 
-#workspaces button:hover {
-	background-color: rgba(255, 255, 255, 0.18);
+#custom-workspaces.workspace-3 {
+	background-position: 52px center;
 }
 
-#workspaces button.active:hover {
-	background-color: #ffffff;
-	color: #000000;
+#custom-workspaces.workspace-4 {
+	background-position: 78px center;
 }
 
-#workspaces button.active:hover label {
-	color: #000000;
+#custom-workspaces.workspace-5 {
+	background-position: 104px center;
+}
+
+#custom-workspaces.moving-right {
+	background-image: url("assets/workspace-tear-right.svg");
+	background-size: 30px 22px;
+}
+
+#custom-workspaces.moving-left {
+	background-image: url("assets/workspace-tear-left.svg");
+	background-size: 30px 22px;
+}
+
+#custom-workspaces.workspace-1.moving-left,
+#custom-workspaces.workspace-1.moving-right {
+	background-position: -4px center;
+}
+
+#custom-workspaces.workspace-2.moving-left,
+#custom-workspaces.workspace-2.moving-right {
+	background-position: 22px center;
+}
+
+#custom-workspaces.workspace-3.moving-left,
+#custom-workspaces.workspace-3.moving-right {
+	background-position: 48px center;
+}
+
+#custom-workspaces.workspace-4.moving-left,
+#custom-workspaces.workspace-4.moving-right {
+	background-position: 74px center;
+}
+
+#custom-workspaces.workspace-5.moving-left,
+#custom-workspaces.workspace-5.moving-right {
+	background-position: 100px center;
 }
 
 /* Right Modules */
