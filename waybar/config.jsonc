@@ -61,18 +61,20 @@
             "connected": "󰂱"
         },
         "on-click": "blueman-manager",
-        "tooltip-format-connected":"{device_enumerate}"
+        "tooltip-format-on": "Not Connected",
+        "tooltip-format-off": "Not Connected",
+        "tooltip-format-connected": "{device_alias}"
     },
     "custom/pipewire": {
-	    "format": "",
+	    "format": "{}",
         "return-type": "json",
         "signal": 8,
-        "interval": "once",
+        "interval": 2,
         "format-icons": {
             "mute": "", 
 	    "default": ["", "", ""]
 	    },
-	    "exec": "pw-volume status"
+	    "exec": "~/.config/waybar/scripts/pipewire-status.sh"
     },
     "battery": {
         "bat": "BAT0",
@@ -83,8 +85,15 @@
         },
         "full-at": 80,
         "format": "{icon}",
-        "format-icons": ["", "", "", "", ""],
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],
         "format-plugged": "", 
+        "tooltip-format-charging": "Charging: {capacity}%",
 	    "tooltip-format": "{capacity}%"
     }
 }

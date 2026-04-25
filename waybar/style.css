@@ -93,14 +93,29 @@ window#waybar {
 
 /* Right Modules */
 
-.modules-right,
-#custom-media, 
+.modules-right {
+	margin-right: 8px;
+}
+
+#custom-media,
 #network,
 #bluetooth,
-#pipewire,
+#custom-pipewire,
 #battery {
-	margin-right: 10px;
-	margin-left: 10px;
+	margin: 0 6px;
+}
+
+#network,
+#bluetooth,
+#custom-pipewire,
+#battery {
+	min-width: 26px;
+	padding: 0;
+}
+
+#custom-pipewire {
+	font-family: "0xProto Nerd Font Mono";
+	font-size: 15px;
 }
 
 #custom-media {
