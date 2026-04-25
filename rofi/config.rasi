@@ -6,8 +6,8 @@ configuration {
     
     display-run: "Execute";
 
-    width: 600px; 
-    height: 400px;
+    width: 900px; 
+    height: 550px;
 }
 
 window {
@@ -28,8 +28,10 @@ left-column{
     orientation: vertical;
     width: 50%;
 
-    background-image: url("~/Images/AdeptusMechanicus-Logo.jpg");
-    background-color: #000000;
+    background-image: url("~/Images/AdeptusMechanicus-Logo.jpg", height);
+    background-color: #000000; 
+    background-size: 200%; 
+    background-position: 0% 50%;
 
     children: [ "inputbar" ];
     padding: 20px;
@@ -37,7 +39,7 @@ left-column{
 
 inputbar{
     text-color: #ffffff;
-    border-radius: 5 px;
+    border-radius: 5px;
     padding: 8px;
 }
 

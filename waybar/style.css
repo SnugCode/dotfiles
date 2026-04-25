@@ -18,6 +18,54 @@ window#waybar {
 	background-color: rgba(17, 17, 17, 0.7);
 }
 
+/* Workspaces */
+
+#workspaces {
+	margin-left: 8px;
+}
+
+#workspaces button {
+	min-width: 22px;
+	min-height: 22px;
+	margin: 0 2px;
+	padding: 0;
+	border-radius: 999px;
+	background-color: transparent;
+	color: #ffffff;
+}
+
+#workspaces button label {
+	min-width: 22px;
+	min-height: 22px;
+	padding: 0;
+	margin: 0;
+	font-size: 15px;
+	font-family: "0xProto Nerd Font Mono";
+	-gtk-icon-transform: translate(0, 0);
+}
+
+#workspaces button.active {
+	background-color: #ffffff;
+	color: #000000;
+}
+
+#workspaces button.active label {
+	color: #000000;
+}
+
+#workspaces button:hover {
+	background-color: rgba(255, 255, 255, 0.18);
+}
+
+#workspaces button.active:hover {
+	background-color: #ffffff;
+	color: #000000;
+}
+
+#workspaces button.active:hover label {
+	color: #000000;
+}
+
 /* Right Modules */
 
 .modules-right,
