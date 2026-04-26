@@ -13,6 +13,7 @@ VSCodium/*
 VSCodium/User/*
 !VSCodium/User/settings.json
 !VSCodium/User/keybindings.json
+!VSCodium/User/extensions.txt
 !VSCodium/User/snippets/
 !VSCodium/User/snippets/**
 
