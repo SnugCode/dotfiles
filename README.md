@@ -48,6 +48,7 @@ Fastfetch ASCII logo.
 - `rofi/` - Rofi launcher theme with a left image panel
 - `kitty/` - Kitty terminal configuration
 - `fastfetch/` - Fastfetch module layout and custom ASCII logo
+- `mozilla/firefox/` - portable Firefox `user.js` and chrome CSS customizations
 - `gtk-3.0/`, `dconf/`, `dolphinrc`, `baloofileinformationrc` - desktop/app settings
 
 ## Desktop Notes
@@ -62,6 +63,8 @@ Fastfetch ASCII logo.
 - Waybar right modules open GTK popups for media, Wi-Fi, Bluetooth, and volume.
   The media module uses MPRIS/playerctl, Wi-Fi uses NetworkManager/nmcli,
   Bluetooth uses bluetoothctl, and volume uses wpctl.
+- Firefox customizations are tracked under `mozilla/firefox/` and symlinked into
+  the active Firefox profile. Generated profile state remains ignored.
 - Rofi references `~/Images/AdeptusMechanicus-Tarrot.jpg`.
 - Fastfetch uses `fastfetch/logo.txt` as a raw text logo. The current logo is
   about 100 columns wide, so it looks best in a wide Kitty window.
@@ -74,7 +77,7 @@ These directories are mostly application-generated state and caches rather than 
 - `VSCodium/`
 - `obsidian/`
 - `spotify/`
-- `mozilla/`
+- `mozilla/firefox/Crash Reports/`
 - `pulse/`
 - `session/`
 - `trashrc`

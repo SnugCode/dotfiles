@@ -1,7 +1,6 @@
 dconf/ 
 go/ 
 gtk-3.0/
-mozilla/ 
 pulse/  
 session/ 
 spotify/ 
@@ -9,6 +8,12 @@ systemd/
 VSCodium/ 
 yay/ 
 obsidian/
+
+mozilla/firefox/*
+!mozilla/firefox/user.js
+!mozilla/firefox/chrome/
+!mozilla/firefox/chrome/userChrome.css
+!mozilla/firefox/chrome/userContent.css
 
 dolphinrc
 trashrc

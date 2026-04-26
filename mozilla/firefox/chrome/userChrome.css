@@ -1,0 +1,49 @@
+/* Firefox UI styling for the local Hyprland desktop. */
+
+:root {
+  --snug-bg: #111111;
+  --snug-panel: rgba(17, 17, 17, 0.92);
+  --snug-border: rgba(255, 255, 255, 0.14);
+  --snug-text: #ffffff;
+  --snug-muted: rgba(255, 255, 255, 0.68);
+}
+
+#navigator-toolbox {
+  background: var(--snug-bg) !important;
+  border-bottom: 1px solid var(--snug-border) !important;
+}
+
+#TabsToolbar,
+#nav-bar,
+#PersonalToolbar {
+  background: transparent !important;
+  color: var(--snug-text) !important;
+}
+
+.tab-background {
+  border-radius: 6px !important;
+}
+
+.tabbrowser-tab[selected] .tab-background {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+
+.tabbrowser-tab:not([selected]) .tab-label {
+  color: var(--snug-muted) !important;
+}
+
+#urlbar-background {
+  background: var(--snug-panel) !important;
+  border: 1px solid var(--snug-border) !important;
+  border-radius: 7px !important;
+}
+
+#urlbar-input,
+#searchbar input {
+  color: var(--snug-text) !important;
+}
+
+toolbarbutton,
+#urlbar {
+  color: var(--snug-text) !important;
+}

@@ -1,0 +1,15 @@
+/* Firefox content styling for built-in pages. */
+
+@-moz-document url("about:newtab"), url("about:home"), url("about:blank") {
+  body {
+    background: #111111 !important;
+    color: #ffffff !important;
+  }
+
+  .logo-and-wordmark,
+  .search-wrapper,
+  .top-sites-list,
+  .personalize-button {
+    filter: grayscale(1);
+  }
+}
