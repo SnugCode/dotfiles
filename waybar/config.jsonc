@@ -32,23 +32,23 @@
         "format-alt": "{:%Y-%m-%d}"
     },
     "custom/media": {
-        "format": "{icon} {text}",
+        "format": "{text}",
         "return-type": "json",
         "max-length": 40,
         "format-icons": {
-            "spotify": "",
+            "spotify": "󰓇",
             "default": "🎜"
         },
         "escape": true,
-        "exec": "~/.config/waybar/apps/mediaplayer.py 2> /dev/null", 
-        "on-click": "playerctl -p spotify play-pause"
+        "exec": "~/.config/waybar/scripts/mediaplayer.py 2> /dev/null", 
+        "on-click": "~/.config/waybar/scripts/media-menu.py"
     },
     "network": {
         "format-wifi": "",
         "format-ethernet": "{ipaddr}/{cidr} ",
         "format-disconnected": "Disconnected ⚠", 
 	    "tooltip-format": "{essid}", 
-	    "on-click": "kitty -e nmtui-connect"
+	    "on-click": "~/.config/waybar/scripts/wifi-menu.py"
     },
     "bluetooth": {
         "format": "󰂲",
@@ -60,7 +60,7 @@
             "off": "󰂲",
             "connected": "󰂱"
         },
-        "on-click": "blueman-manager",
+        "on-click": "~/.config/waybar/scripts/bluetooth-menu.py",
         "tooltip-format-on": "Not Connected",
         "tooltip-format-off": "Not Connected",
         "tooltip-format-connected": "{device_alias}"
@@ -74,7 +74,8 @@
             "mute": "", 
 	    "default": ["", "", ""]
 	    },
-	    "exec": "~/.config/waybar/scripts/pipewire-status.sh"
+	    "exec": "~/.config/waybar/scripts/pipewire-status.sh",
+	    "on-click": "~/.config/waybar/scripts/volume-slider.py"
     },
     "battery": {
         "bat": "BAT0",

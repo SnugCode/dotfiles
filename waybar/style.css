@@ -115,7 +115,8 @@ window#waybar {
 
 #custom-pipewire {
 	font-family: "0xProto Nerd Font Mono";
-	font-size: 15px;
+	font-size: 18px;
+	min-width: 30px;
 }
 
 #custom-media {
@@ -123,6 +124,7 @@ window#waybar {
 	min-width: 100px;
 	background-color: transparent;
 	color: #ffffff;
+	font-family: "0xProto Nerd Font Mono", "0xProto";
 }
 
 #custom-media.custom-spotify,

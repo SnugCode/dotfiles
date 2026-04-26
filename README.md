@@ -28,12 +28,12 @@ Fastfetch ASCII logo.
 - `wl-clipboard` - provides `wl-copy` and `wl-paste`
 - `cliphist` - clipboard history storage and Rofi clipboard menu
 - `brightnessctl` - brightness keybinds
-- `playerctl` - media keys and Waybar media click actions
-- `wireplumber` / `wpctl` - audio volume and mute keybinds
+- `playerctl` - media keys and Waybar media status/control popup
+- `wireplumber` / `wpctl` - audio volume, mute keybinds, and Waybar volume popup
 - `pipewire` - audio stack used by the Waybar audio module
-- `networkmanager` - network status and `nmtui-connect`
-- `bluez` / `bluetoothctl` - Bluetooth status detection
-- `blueman` - provides `blueman-manager`
+- `networkmanager` / `nmcli` - network status and Waybar Wi-Fi popup
+- `bluez` / `bluetoothctl` - Bluetooth status and Waybar Bluetooth popup
+- `blueman` - provides `blueman-manager` for deeper Bluetooth settings
 
 ## Fonts
 
@@ -56,11 +56,13 @@ Fastfetch ASCII logo.
   polkit authentication agent.
 - Startup workspaces open Kitty, VSCodium, Firefox, Dolphin, and Spotify.
 - Hyprlock uses a blurred screenshot background, a centered clock, the
-  `SnugCode` label, and an image from `/home/snugcode/Images/Mechanicus-Icon.png`.
-- Hyprpaper uses `/home/snugcode/Images/MechAdept-Entertainment.jpg`.
-- Waybar uses local scripts in `waybar/scripts/` and app helpers in
-  `waybar/apps/`.
-- Rofi references `/home/snugcode/Images/AdeptusMechanicus-Tarrot.jpg`.
+  `User` label, and an image from `~/Images/Mechanicus-Icon.png`.
+- Hyprpaper uses `~/Images/MechAdept-Entertainment.jpg`.
+- Waybar uses local helpers in `waybar/scripts/`.
+- Waybar right modules open GTK popups for media, Wi-Fi, Bluetooth, and volume.
+  The media module uses MPRIS/playerctl, Wi-Fi uses NetworkManager/nmcli,
+  Bluetooth uses bluetoothctl, and volume uses wpctl.
+- Rofi references `~/Images/AdeptusMechanicus-Tarrot.jpg`.
 - Fastfetch uses `fastfetch/logo.txt` as a raw text logo. The current logo is
   about 100 columns wide, so it looks best in a wide Kitty window.
 
