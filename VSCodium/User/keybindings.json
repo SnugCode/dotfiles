@@ -1,0 +1,14 @@
+[
+    {
+        "key": "ctrl+alt+c",
+        "command": "chatgpt.openSidebar"
+    },
+    {
+        "key": "ctrl+alt+right",
+        "command": "workbench.action.toggleAuxiliaryBar"
+    },
+    {
+        "key": "ctrl+alt+a",
+        "command": "workbench.action.toggleActivityBarVisibility"
+    }
+]

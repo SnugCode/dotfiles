@@ -5,9 +5,16 @@ pulse/
 session/ 
 spotify/ 
 systemd/ 
-VSCodium/ 
 yay/ 
 obsidian/
+
+VSCodium/*
+!VSCodium/User/
+VSCodium/User/*
+!VSCodium/User/settings.json
+!VSCodium/User/keybindings.json
+!VSCodium/User/snippets/
+!VSCodium/User/snippets/**
 
 mozilla/firefox/*
 !mozilla/firefox/user.js
