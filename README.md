@@ -1,11 +1,17 @@
 # dotfiles
 
-Personal Linux desktop configuration files.
+Personal Linux desktop configuration files for an Arch + Hyprland Wayland setup.
+
+The current look is a dark, minimal desktop with white text, 0xProto fonts,
+Waybar workspace motion, a custom Rofi launcher panel, Hyprlock, and a custom
+Fastfetch ASCII logo.
 
 ## Main Dependencies
 
 - `hyprland` - Wayland compositor
 - `hyprpaper` - wallpaper daemon used by Hyprland autostart
+- `hyprlock` - lock screen
+- `hypridle` - idle lock handling
 - `waybar` - top status bar
 - `rofi` - app launcher and clipboard menu
 - `kitty` - terminal emulator
@@ -37,17 +43,32 @@ Personal Linux desktop configuration files.
 
 ## Configured Areas
 
-- `hypr/` - Hyprland and Hyprpaper configuration
+- `hypr/` - Hyprland, Hyprpaper, Hypridle, and Hyprlock configuration
 - `waybar/` - Waybar config, CSS, scripts, and small SVG assets
-- `rofi/` - Rofi launcher theme
+- `rofi/` - Rofi launcher theme with a left image panel
 - `kitty/` - Kitty terminal configuration
-- `fastfetch/` - Fastfetch module layout
+- `fastfetch/` - Fastfetch module layout and custom ASCII logo
 - `gtk-3.0/`, `dconf/`, `dolphinrc`, `baloofileinformationrc` - desktop/app settings
+
+## Desktop Notes
+
+- Hyprland starts Waybar, Hyprpaper, clipboard watchers, Hypridle, and the KDE
+  polkit authentication agent.
+- Startup workspaces open Kitty, VSCodium, Firefox, Dolphin, and Spotify.
+- Hyprlock uses a blurred screenshot background, a centered clock, the
+  `SnugCode` label, and an image from `/home/snugcode/Images/Mechanicus-Icon.png`.
+- Hyprpaper uses `/home/snugcode/Images/MechAdept-Entertainment.jpg`.
+- Waybar uses local scripts in `waybar/scripts/` and app helpers in
+  `waybar/apps/`.
+- Rofi references `/home/snugcode/Images/AdeptusMechanicus-Tarrot.jpg`.
+- Fastfetch uses `fastfetch/logo.txt` as a raw text logo. The current logo is
+  about 100 columns wide, so it looks best in a wide Kitty window.
 
 ## Generated App State
 
 These directories are mostly application-generated state and caches rather than hand-written config:
 
+- `GIMP/`
 - `VSCodium/`
 - `obsidian/`
 - `spotify/`
@@ -56,8 +77,9 @@ These directories are mostly application-generated state and caches rather than 
 - `session/`
 - `trashrc`
 
-## Notes
+## Quick Checks
 
-- Hyprland launches Kitty, VSCodium, Firefox, Dolphin, and Spotify on startup workspaces.
-- Waybar uses local scripts in `waybar/scripts/` and `waybar/apps/`.
-- Rofi references images from `/home/snugcode/Images/`, including `AdeptusMechanicus-Tarrot.jpg`.
+- `hyprctl reload` - reload Hyprland after config edits
+- `waybar` - test the bar from a terminal
+- `rofi -show drun` - test the launcher
+- `fastfetch --config ~/.config/fastfetch/config.jsonc` - preview Fastfetch
