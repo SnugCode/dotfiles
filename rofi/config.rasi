@@ -1,16 +1,15 @@
 configuration {
-    modes: [ combi ];
-    combi-modes: [ window, drun, run ];
+    modes: [ drun ];
 
     font: "0xProto Nerd Font Mono";
     
     display-run: "Execute";
 
-    width: 900px; 
-    height: 550px;
 }
 
 window {
+    width: 1000px; 
+    height: 782px;
     background-color: transparent;
     padding: 0px;
     children: [ mainbox ];
@@ -18,6 +17,7 @@ window {
 
 mainbox{
     orientation: horizontal;
+    spacing: 0px;
     children: [ "left-column", "listview" ]; 
 
     width: 100%; 
@@ -26,27 +26,47 @@ mainbox{
 
 left-column{
     orientation: vertical;
-    width: 50%;
+    width: 380px;
+    height: 782px;
+    expand: false;
 
-    background-image: url("~/Images/AdeptusMechanicus-Logo.jpg", height);
     background-color: #000000; 
-    background-size: 200%; 
-    background-position: 0% 50%;
 
+    children: [ "search-section", "image-section" ];
+}
+
+search-section {
+    orientation: vertical;
+    height: 42px;
+    width: 100%;
+    expand: false;
+    padding: 4px 12px;
     children: [ "inputbar" ];
-    padding: 20px;
+}
+
+image-section {
+    width: 100%;
+    height: 740px;
+    expand: true;
+    background-image: url("/home/snugcode/Images/AdeptusMechanicus-Tarrot.jpg", height);
 }
 
 inputbar{
+    background-color: rgba(255, 255, 255, 0.08);
     text-color: #ffffff;
+    border: 2px;
+    border-color: rgba(255, 255, 255, 0.75);
     border-radius: 5px;
-    padding: 8px;
+    padding: 9px 12px;
 }
 
 listview{
-    width: 50%;
+    width: 620px;
+    height: 782px;
+    expand: true;
     background-color: #000000;
-    lines: 5;
+    scrollbar: false;
+    lines: 15;
 }
 
 prompt {
@@ -60,6 +80,7 @@ entry {
 element {
     orientation: horizontal;
     spacing: 5px;
+    padding: 0px 0px 0px 14px;
 
     children: [element-text, element-icon];
 }
