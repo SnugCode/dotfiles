@@ -7,6 +7,7 @@ spotify/
 systemd/ 
 yay/ 
 obsidian/
+.codex
 
 VSCodium/*
 !VSCodium/User/

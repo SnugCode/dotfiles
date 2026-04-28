@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-import re
+import fcntl
 import signal
 import subprocess
-import fcntl
 import sys
 import time
 
@@ -14,10 +13,8 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 
 
-SINK = "@DEFAULT_AUDIO_SINK@"
-WAYBAR_SIGNAL = "RTMIN+8"
-LOCK_PATH = "/tmp/waybar-volume-slider.lock"
-OSD_ACTIVITY_PATH = "/tmp/waybar-volume-slider-osd.activity"
+LOCK_PATH = "/tmp/waybar-brightness-slider.lock"
+OSD_ACTIVITY_PATH = "/tmp/waybar-brightness-slider-osd.activity"
 OSD_IDLE_SECONDS = 3
 MANUAL_IDLE_SECONDS = 12
 
@@ -26,22 +23,21 @@ def run(*args):
     return subprocess.run(args, check=False, capture_output=True, text=True)
 
 
-def current_volume():
-    result = run("wpctl", "get-volume", SINK)
-    match = re.search(r"Volume:\s*([0-9.]+)", result.stdout)
-    if not match:
+def brightness_value(command):
+    result = run("brightnessctl", command)
+    try:
+        return int(result.stdout.strip())
+    except ValueError:
+        return 0
+
+
+def current_brightness():
+    current = brightness_value("get")
+    maximum = brightness_value("max")
+    if maximum <= 0:
         return 50
 
-    return max(0, min(150, round(float(match.group(1)) * 100)))
-
-
-def is_muted():
-    result = run("wpctl", "get-volume", SINK)
-    return "[MUTED]" in result.stdout
-
-
-def refresh_waybar():
-    run("pkill", f"-{WAYBAR_SIGNAL}", "waybar")
+    return max(0, min(100, round((current / maximum) * 100)))
 
 
 def touch_osd_activity():
@@ -57,28 +53,21 @@ def osd_activity_time():
         return 0
 
 
-def change_volume(direction):
+def change_brightness(direction):
     if direction == "up":
-        run("wpctl", "set-mute", SINK, "0")
-        run("wpctl", "set-volume", "-l", "1", SINK, "5%+")
+        run("brightnessctl", "-e4", "-n2", "set", "5%+")
     elif direction == "down":
-        run("wpctl", "set-mute", SINK, "0")
-        run("wpctl", "set-volume", SINK, "5%-")
-    elif direction == "mute":
-        run("wpctl", "set-mute", SINK, "toggle")
+        run("brightnessctl", "-e4", "-n2", "set", "5%-")
     else:
-        raise ValueError(f"Unknown volume direction: {direction}")
-
-    refresh_waybar()
+        raise ValueError(f"Unknown brightness direction: {direction}")
 
 
-class VolumeSlider(Gtk.Window):
+class BrightnessSlider(Gtk.Window):
     def __init__(self, osd_mode=False):
-        super().__init__(title="Volume")
+        super().__init__(title="Brightness")
 
         self.osd_mode = osd_mode
-        self.last_volume = current_volume()
-        self.last_muted = is_muted()
+        self.last_brightness = current_brightness()
         self.last_activity = osd_activity_time() if osd_mode else time.monotonic()
         self.syncing_scale = False
 
@@ -100,14 +89,13 @@ class VolumeSlider(Gtk.Window):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         self.add(box)
 
-        self.icon = Gtk.Label()
-        self.icon.get_style_context().add_class("volume-icon")
-        self.icon.set_halign(Gtk.Align.CENTER)
-        box.pack_start(self.icon, False, False, 0)
-        self.sync_icon()
+        icon = Gtk.Label(label="󰝩")
+        icon.get_style_context().add_class("brightness-icon")
+        icon.set_halign(Gtk.Align.CENTER)
+        box.pack_start(icon, False, False, 0)
 
-        self.scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 150, 1)
-        self.scale.set_value(self.last_volume)
+        self.scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 1)
+        self.scale.set_value(self.last_brightness)
         self.scale.set_draw_value(False)
         self.scale.set_can_focus(not osd_mode)
         self.scale.set_size_request(210, -1)
@@ -126,7 +114,7 @@ class VolumeSlider(Gtk.Window):
             self.connect("key-press-event", self.on_key_press)
         GLib.timeout_add_seconds(1, self.close_if_idle)
         if osd_mode:
-            GLib.timeout_add(100, self.sync_osd_volume)
+            GLib.timeout_add(100, self.sync_osd_brightness)
 
         css = b"""
         window {
@@ -155,7 +143,7 @@ class VolumeSlider(Gtk.Window):
             box-shadow: none;
         }
 
-        .volume-icon {
+        .brightness-icon {
             font-family: "0xProto Nerd Font Mono";
             font-size: 64px;
         }
@@ -173,16 +161,12 @@ class VolumeSlider(Gtk.Window):
             return
 
         self.mark_active()
-        volume = round(scale.get_value())
-        if volume == self.last_volume:
+        brightness = round(scale.get_value())
+        if brightness == self.last_brightness:
             return
 
-        self.last_volume = volume
-        self.last_muted = False
-        run("wpctl", "set-mute", SINK, "0")
-        run("wpctl", "set-volume", SINK, f"{volume}%")
-        self.sync_icon()
-        refresh_waybar()
+        self.last_brightness = brightness
+        run("brightnessctl", "-e4", "-n2", "set", f"{brightness}%")
 
     def on_key_press(self, _window, event):
         self.mark_active()
@@ -196,30 +180,16 @@ class VolumeSlider(Gtk.Window):
     def suppress_user_input(self, *_args):
         return True
 
-    def sync_osd_volume(self):
+    def sync_osd_brightness(self):
         self.last_activity = max(self.last_activity, osd_activity_time())
-        volume = current_volume()
-        muted = is_muted()
-        if volume != self.last_volume:
-            self.last_volume = volume
+        brightness = current_brightness()
+        if brightness != self.last_brightness:
+            self.last_brightness = brightness
             self.syncing_scale = True
-            self.scale.set_value(volume)
+            self.scale.set_value(brightness)
             self.syncing_scale = False
-        if muted != self.last_muted:
-            self.last_muted = muted
-            self.sync_icon()
 
         return GLib.SOURCE_CONTINUE
-
-    def sync_icon(self):
-        if self.last_muted:
-            self.icon.set_text("")
-        elif self.last_volume < 34:
-            self.icon.set_text("")
-        elif self.last_volume < 67:
-            self.icon.set_text("")
-        else:
-            self.icon.set_text("")
 
     def close_if_idle(self):
         idle_seconds = OSD_IDLE_SECONDS if self.osd_mode else MANUAL_IDLE_SECONDS
@@ -247,7 +217,7 @@ class VolumeSlider(Gtk.Window):
 def main():
     osd_mode = len(sys.argv) == 3 and sys.argv[1] == "--osd"
     if osd_mode:
-        change_volume(sys.argv[2])
+        change_brightness(sys.argv[2])
         touch_osd_activity()
 
     lock_file = open(LOCK_PATH, "w")
@@ -257,7 +227,7 @@ def main():
         return
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)
-    window = VolumeSlider(osd_mode=osd_mode)
+    window = BrightnessSlider(osd_mode=osd_mode)
     window.present_near_top_right()
     Gtk.main()
 
