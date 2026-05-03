@@ -144,6 +144,7 @@ window#waybar {
 #custom-media,
 #network,
 #bluetooth,
+#custom-localsend,
 #custom-pipewire,
 #battery {
 	margin: 0 6px;
@@ -151,6 +152,7 @@ window#waybar {
 
 #network,
 #bluetooth,
+#custom-localsend,
 #custom-media,
 #custom-pipewire,
 #battery {
@@ -162,6 +164,11 @@ window#waybar {
 	font-family: "0xProto Nerd Font Mono";
 	font-size: 18px;
 	min-width: 30px;
+}
+
+#custom-localsend {
+	min-width: 20px;
+	padding: 0 2px;
 }
 
 #custom-media {

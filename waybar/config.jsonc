@@ -13,7 +13,7 @@
     // Module Order
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["network", "bluetooth", "custom/pipewire", "custom/media", "battery"],
+    "modules-right": ["network", "bluetooth", "custom/localsend", "custom/pipewire", "custom/media", "battery"],
     
     // Module Configuration
     "hyprland/workspaces": {
@@ -80,6 +80,12 @@
         "tooltip-format-on": "Not Connected",
         "tooltip-format-off": "Not Connected",
         "tooltip-format-connected": "{device_alias}"
+    },
+    "custom/localsend": {
+        "format": "",
+        "tooltip": true,
+        "tooltip-format": "LocalSend",
+        "on-click": "~/.config/waybar/scripts/localsend-menu.py"
     },
     "custom/pipewire": {
 	    "format": "{}",
