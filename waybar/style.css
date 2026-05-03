@@ -15,10 +15,54 @@ window {
 window#waybar {
 	padding: 0; 
 	margin: 0;
-	background-color: rgba(17, 17, 17, 0.7);
+	border-radius: 8px;
+	background-color: rgba(0, 0, 0, 0.85);
 }
 
 /* Workspaces */
+
+#workspaces {
+	min-width: 126px;
+	min-height: 22px;
+	margin-left: 8px;
+	font-family: "0xProto Nerd Font Mono";
+	font-size: 15px;
+}
+
+#workspaces button {
+	min-width: 22px;
+	min-height: 22px;
+	margin: 0 2px;
+	padding: 0;
+	border-radius: 999px;
+	background-color: transparent;
+	color: #ffffff;
+	font-family: "0xProto Nerd Font Mono";
+	font-size: 15px;
+}
+
+#workspaces button label {
+	color: #ffffff;
+}
+
+#workspaces button.active {
+	background-color: #ffffff;
+	color: #000000;
+}
+
+#workspaces button.active label {
+	color: #000000;
+}
+
+#workspaces button:hover {
+	background-color: transparent;
+	box-shadow: none;
+	text-shadow: none;
+}
+
+#workspaces button.active:hover {
+	background-color: #ffffff;
+}
 
 #custom-workspaces {
 	min-width: 126px;
@@ -107,6 +151,7 @@ window#waybar {
 
 #network,
 #bluetooth,
+#custom-media,
 #custom-pipewire,
 #battery {
 	min-width: 26px;
@@ -120,8 +165,7 @@ window#waybar {
 }
 
 #custom-media {
-	padding: 0 8px;
-	min-width: 100px;
+	padding: 0;
 	background-color: transparent;
 	color: #ffffff;
 	font-family: "0xProto Nerd Font Mono", "0xProto";

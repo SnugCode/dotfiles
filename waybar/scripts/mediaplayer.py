@@ -64,10 +64,11 @@ class PlayerManager:
     def get_players(self) -> List[Player]:
         return self.manager.props.players
 
-    def write_output(self, text, player):
-        logger.debug(f"Writing output: {text}")
+    def write_output(self, icon, tooltip, player):
+        logger.debug(f"Writing output: {icon}")
 
-        output = {"text": text,
+        output = {"text": icon,
+                  "tooltip": tooltip,
                   "class": "custom-" + player.props.player_name,
                   "alt": player.props.player_name}
 
@@ -111,6 +112,7 @@ class PlayerManager:
     def on_metadata_changed(self, player, metadata, _=None):
         logger.debug(f"Metadata changed for player {player.props.player_name}")
         player_name = player.props.player_name
+        status_icon = "" if player.props.status == "Playing" else ""
         artist = player.get_artist()
         artist = artist.replace("&", "&amp;")
         title = player.get_title()
@@ -124,15 +126,16 @@ class PlayerManager:
         else:
             track_info = title
 
+        tooltip = track_info or player_name
         if track_info:
             if player.props.status == "Playing":
-                track_info = " " + track_info
+                tooltip = "Playing: " + track_info
             else:
-                track_info = " " + track_info
+                tooltip = "Paused: " + track_info
         # only print output if no other player is playing
         current_playing = self.get_first_playing_player()
         if current_playing is None or current_playing.props.player_name == player.props.player_name:
-            self.write_output(track_info, player)
+            self.write_output(status_icon, tooltip, player)
         else:
             logger.debug(f"Other player {current_playing.props.player_name} is playing, skipping")
 

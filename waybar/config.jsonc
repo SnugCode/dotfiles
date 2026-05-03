@@ -2,17 +2,33 @@
     // Positioning
     "layer": "top",
     "height": 25,
+    "margin-top": 8,
+    "margin-left": 8,
+    "margin-right": 8,
     "spacing": 4,
     
     // Apply CSS on Change
     "reload_style_on_change": true,
 
     // Module Order
-    "modules-left": ["custom/workspaces", "hyprland/window"],
+    "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/media", "network", "bluetooth", "custom/pipewire", "battery"],
+    "modules-right": ["network", "bluetooth", "custom/pipewire", "custom/media", "battery"],
     
     // Module Configuration
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "󰉋",
+            "5": ""
+        },
+        "persistent-workspaces": {
+            "*": 5
+        }
+    },
     "custom/workspaces": {
         "exec": "~/.config/waybar/scripts/workspaces.sh",
         "format": "{}",
