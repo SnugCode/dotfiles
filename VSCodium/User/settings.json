@@ -267,5 +267,8 @@
         "titleBar.inactiveBackground": "#111111",
         "titleBar.inactiveForeground": "#FFFFFFAD",
         "walkThrough.embeddedEditorBackground": "#111111"
-    }
+    },
+    "fiveServer.browser": [
+        "firefox"
+    ]
 }

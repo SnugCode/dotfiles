@@ -22,7 +22,9 @@ mozilla/firefox/*
 !mozilla/firefox/user.js
 !mozilla/firefox/chrome/
 !mozilla/firefox/chrome/userChrome.css
-!mozilla/firefox/chrome/userContent.css
+!mozilla/firefox/chrome/userContent.css 
+
+google-chrome/
 
 dolphinrc
 trashrc
