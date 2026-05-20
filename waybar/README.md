@@ -36,7 +36,7 @@ workspace, audio, Bluetooth, LocalSend, battery, and media icons.
 Optional but used by this setup:
 
 ```sh
-sudo pacman -S spotify-launcher
+sudo pacman -S cider
 flatpak install flathub org.localsend.localsend_app
 ```
 

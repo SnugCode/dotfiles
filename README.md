@@ -19,7 +19,7 @@ Fastfetch ASCII logo.
 - `dolphin` - file manager
 - `firefox` - browser
 - `codium` - editor/IDE
-- `spotify-launcher` - Spotify launcher
+- `cider` - Apple Music client
 
 ## Wayland / Hyprland Helpers
 
@@ -55,7 +55,7 @@ Fastfetch ASCII logo.
 
 - Hyprland starts Waybar, Hyprpaper, clipboard watchers, Hypridle, and the KDE
   polkit authentication agent.
-- Startup workspaces open Kitty, VSCodium, Firefox, Dolphin, and Spotify.
+- Startup workspaces open Kitty, VSCodium, Firefox, Dolphin, and Cider.
 - Hyprlock uses a blurred screenshot background, a centered clock, the
   `User` label, and an image from `~/Images/Mechanicus-Icon.png`.
 - Hyprpaper uses `~/Images/MechAdept-Entertainment.jpg`.
@@ -76,7 +76,6 @@ These directories are mostly application-generated state and caches rather than 
 - `GIMP/`
 - `VSCodium/`
 - `obsidian/`
-- `spotify/`
 - `mozilla/firefox/Crash Reports/`
 - `pulse/`
 - `session/`

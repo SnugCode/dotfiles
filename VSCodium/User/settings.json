@@ -68,8 +68,7 @@
         "hypridle.conf": "ini",
         "hyprlock.conf": "ini",
         "hyprpaper.conf": "ini",
-        "kitty.conf": "properties",
-        "spotify-launcher.conf": "toml"
+        "kitty.conf": "properties"
     },
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features",

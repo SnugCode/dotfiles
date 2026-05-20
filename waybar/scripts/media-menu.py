@@ -13,6 +13,8 @@ from gi.repository import Gdk, GLib, Gtk, Pango  # noqa: E402
 
 
 LOCK_PATH = "/tmp/waybar-media-menu.lock"
+PREFERRED_PLAYERS = ("cider", "cider2")
+CIDER_ICON = ""
 
 
 def run(*args):
@@ -26,8 +28,9 @@ def players():
 
 def selected_player():
     available = players()
-    if "spotify" in available:
-        return "spotify"
+    for preferred in PREFERRED_PLAYERS:
+        if preferred in available:
+            return preferred
     return available[0] if available else ""
 
 
@@ -41,7 +44,7 @@ def metadata(player):
     if not player:
         return {
             "title": "No player",
-            "artist": "Open Spotify or start playback",
+            "artist": "Open Cider or start playback",
             "album": "",
             "playlist": "",
             "status": "Stopped",
@@ -80,12 +83,10 @@ def playlist_name(player):
         "xesam:playlistName",
         "xesam:playlistTitle",
         "mpris:playlist",
-        "spotify:playlist",
-        "spotify:context",
         "xesam:context",
     ):
         value = fields.get(key, "")
-        if value and not value.startswith(("http://", "https://", "spotify:")):
+        if value and not value.startswith(("http://", "https://")):
             return value
 
     return ""
@@ -218,7 +219,7 @@ class MediaMenu(Gtk.Window):
             self.root.remove(child)
 
         header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        icon = Gtk.Label(label="󰓇" if self.player == "spotify" else "🎜")
+        icon = Gtk.Label(label=CIDER_ICON if self.player in PREFERRED_PLAYERS else "🎜")
         icon.get_style_context().add_class("player-icon")
         header.pack_start(icon, False, False, 0)
 
@@ -300,9 +301,9 @@ class MediaMenu(Gtk.Window):
         refresh.connect("clicked", self.refresh_clicked)
         row.pack_start(refresh, True, True, 0)
 
-        open_spotify = Gtk.Button(label="Open Spotify")
-        open_spotify.connect("clicked", self.open_spotify)
-        row.pack_start(open_spotify, True, True, 0)
+        open_cider = Gtk.Button(label="Open Cider")
+        open_cider.connect("clicked", self.open_cider)
+        row.pack_start(open_cider, True, True, 0)
         return row
 
     def control_button(self, label, callback):
@@ -355,9 +356,9 @@ class MediaMenu(Gtk.Window):
             self.rebuild()
         return GLib.SOURCE_CONTINUE
 
-    def open_spotify(self, _button):
+    def open_cider(self, _button):
         self.mark_active()
-        run("hyprctl", "dispatch", "exec", "spotify-launcher")
+        run("hyprctl", "dispatch", "exec", "cider")
         Gtk.main_quit()
 
     def on_key_press(self, _window, event):

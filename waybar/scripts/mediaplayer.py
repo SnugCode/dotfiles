@@ -13,6 +13,11 @@ import os
 from typing import List
 
 logger = logging.getLogger(__name__)
+PREFERRED_PLAYERS = ("cider", "cider2")
+
+
+def is_preferred_player(player_name):
+    return player_name.lower() in PREFERRED_PLAYERS
 
 def signal_handler(sig, frame):
     logger.info("Received signal to stop, exiting")
@@ -90,7 +95,13 @@ class PlayerManager:
             # if any are playing, show the first one that is playing
             # reverse order, so that the most recently added ones are preferred
             for player in players[::-1]:
+                if player.props.status == "Playing" and is_preferred_player(player.props.player_name):
+                    return player
+            for player in players[::-1]:
                 if player.props.status == "Playing":
+                    return player
+            for player in players[::-1]:
+                if is_preferred_player(player.props.player_name):
                     return player
             # if none are playing, show the first one
             return players[0]
@@ -119,9 +130,7 @@ class PlayerManager:
         title = title.replace("&", "&amp;")
 
         track_info = ""
-        if player_name == "spotify" and "mpris:trackid" in metadata.keys() and ":ad:" in player.props.metadata["mpris:trackid"]:
-            track_info = "Advertisement"
-        elif artist is not None and title is not None:
+        if artist is not None and title is not None:
             track_info = f"{artist} - {title}"
         else:
             track_info = title

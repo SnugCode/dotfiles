@@ -4,10 +4,13 @@ gtk-3.0/
 pulse/  
 session/ 
 spotify/ 
+sh.cider.genten/
 systemd/ 
 yay/ 
 obsidian/
 .codex
+__pycache__/
+*.pyc
 
 VSCodium/*
 !VSCodium/User/
