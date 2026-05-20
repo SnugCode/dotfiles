@@ -17,7 +17,10 @@ LOCK_PATH = "/tmp/waybar-bluetooth-menu.lock"
 
 
 def run(*args):
-    return subprocess.run(args, check=False, capture_output=True, text=True)
+    try:
+        return subprocess.run(args, check=False, capture_output=True, text=True)
+    except FileNotFoundError as error:
+        return subprocess.CompletedProcess(args, 127, "", str(error))
 
 
 def controller_powered():
@@ -44,6 +47,134 @@ def paired_devices():
 
     for device in devices:
         device["connected"] = device["mac"] in connected
+
+    return devices
+
+
+def normalize(value):
+    return re.sub(r"[^a-z0-9]+", "", value.lower())
+
+
+def compact_mac(mac):
+    return mac.replace(":", "").lower()
+
+
+def percent_value(value):
+    match = re.search(r"(\d{1,3})\s*%", value)
+    if not match:
+        return None
+
+    percent = int(match.group(1))
+    if 0 <= percent <= 100:
+        return percent
+
+    return None
+
+
+def parse_upower_info(output):
+    fields = {}
+    for line in output.splitlines():
+        match = re.match(r"\s*([^:]+):\s*(.+)", line)
+        if match:
+            fields[match.group(1).strip().lower()] = match.group(2).strip()
+
+    percent = percent_value(fields.get("percentage", ""))
+    if percent is None:
+        return None
+
+    names = [
+        fields.get("model", ""),
+        fields.get("native-path", ""),
+        fields.get("serial", ""),
+        fields.get("vendor", ""),
+        fields.get("detail", ""),
+    ]
+    return {"percent": percent, "names": [name for name in names if name]}
+
+
+def upower_batteries():
+    result = run("upower", "-e")
+    batteries = []
+
+    for path in result.stdout.splitlines():
+        if not path:
+            continue
+
+        info = parse_upower_info(run("upower", "-i", path).stdout)
+        if info:
+            info["source"] = "upower"
+            info["names"].append(path)
+            batteries.append(info)
+
+    return batteries
+
+
+def solaar_batteries():
+    result = run("solaar", "show")
+    batteries = []
+    current_name = None
+
+    for line in result.stdout.splitlines():
+        device_match = re.match(r"\s*(?:\d+:\s*)?(.+?)\s*$", line)
+        if line.strip() and device_match and not line.startswith(" "):
+            current_name = device_match.group(1)
+            continue
+
+        numbered_match = re.match(r"\s+\d+:\s+(.+?)\s*$", line)
+        if numbered_match:
+            current_name = numbered_match.group(1)
+            continue
+
+        battery_match = re.match(r"\s*Battery:\s+(.+)", line)
+        if battery_match and current_name:
+            percent = percent_value(battery_match.group(1))
+            if percent is not None:
+                batteries.append(
+                    {
+                        "percent": percent,
+                        "source": "solaar",
+                        "names": [current_name],
+                    }
+                )
+
+    return batteries
+
+
+def battery_score(device, battery):
+    device_name = normalize(device["name"])
+    device_mac = compact_mac(device["mac"])
+    score = 0
+
+    for name in battery["names"]:
+        candidate = normalize(name)
+        if not candidate:
+            continue
+
+        if device_mac and device_mac in candidate:
+            score = max(score, 100)
+        elif candidate == device_name:
+            score = max(score, 90)
+        elif device_name in candidate or candidate in device_name:
+            score = max(score, 80)
+
+    return score
+
+
+def attach_batteries(devices):
+    batteries = upower_batteries() + solaar_batteries()
+
+    for device in devices:
+        matches = sorted(
+            (
+                (battery_score(device, battery), battery)
+                for battery in batteries
+            ),
+            key=lambda match: match[0],
+            reverse=True,
+        )
+
+        if matches and matches[0][0] > 0:
+            device["battery"] = matches[0][1]["percent"]
 
     return devices
 
@@ -157,7 +288,7 @@ class BluetoothMenu(Gtk.Window):
         self.root.pack_start(separator, False, False, 0)
 
         if powered:
-            devices = paired_devices()
+            devices = attach_batteries(paired_devices())
             if devices:
                 for device in devices:
                     self.root.pack_start(self.device_row(device), False, False, 0)
@@ -188,7 +319,11 @@ class BluetoothMenu(Gtk.Window):
         name.get_style_context().add_class("device-name")
         labels.pack_start(name, False, False, 0)
 
-        status = Gtk.Label(label="Connected" if device["connected"] else "Paired")
+        status_text = "Connected" if device["connected"] else "Paired"
+        if "battery" in device:
+            status_text = f"{status_text} - {device['battery']}%"
+
+        status = Gtk.Label(label=status_text)
         status.set_halign(Gtk.Align.START)
         status.get_style_context().add_class("device-status")
         labels.pack_start(status, False, False, 0)
