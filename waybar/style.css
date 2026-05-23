@@ -143,6 +143,7 @@ window#waybar {
 
 #custom-media,
 #network,
+#custom-protonvpn,
 #bluetooth,
 #custom-localsend,
 #custom-pipewire,
@@ -151,6 +152,7 @@ window#waybar {
 }
 
 #network,
+#custom-protonvpn,
 #bluetooth,
 #custom-localsend,
 #custom-media,
@@ -158,6 +160,17 @@ window#waybar {
 #battery {
 	min-width: 26px;
 	padding: 0;
+}
+
+#tray {
+	margin: 0;
+	padding: 0;
+	min-width: 0;
+	opacity: 0;
+}
+
+#custom-protonvpn {
+	font-family: "0xProto Nerd Font Mono";
 }
 
 #custom-pipewire {

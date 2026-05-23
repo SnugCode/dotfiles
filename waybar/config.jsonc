@@ -13,7 +13,7 @@
     // Module Order
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["network", "bluetooth", "custom/localsend", "custom/pipewire", "custom/media", "battery"],
+    "modules-right": ["network", "custom/protonvpn", "bluetooth", "custom/localsend", "custom/pipewire", "custom/media", "battery", "tray"],
     
     // Module Configuration
     "hyprland/workspaces": {
@@ -62,6 +62,17 @@
         "format-disconnected": "Disconnected ⚠", 
 	    "tooltip-format": "{essid}", 
 	    "on-click": "~/.config/waybar/scripts/wifi-menu.py"
+    },
+    "custom/protonvpn": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 5,
+        "exec": "~/.config/waybar/scripts/protonvpn-status.py",
+        "on-click": "~/.config/waybar/scripts/protonvpn-menu.py"
+    },
+    "tray": {
+        "icon-size": 1,
+        "spacing": 0
     },
     "bluetooth": {
         "format": "󰂲",
