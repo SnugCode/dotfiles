@@ -269,5 +269,6 @@
     },
     "fiveServer.browser": [
         "firefox"
-    ]
+    ],
+    "claudeCode.preferredLocation": "panel"
 }

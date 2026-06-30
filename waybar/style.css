@@ -8,7 +8,6 @@
 }
 
 window {
-	background-color: rgba(0, 0, 0, 0.2);
 	font-weight: bold;
 }
 
@@ -64,110 +63,24 @@ window#waybar {
 	background-color: #ffffff;
 }
 
-#custom-workspaces {
-	min-width: 126px;
-	min-height: 22px;
-	margin-left: 8px;
-	padding: 0;
-	border-radius: 999px;
-	background-image: url("assets/workspace-circle.svg");
-	background-repeat: no-repeat;
-	background-size: 22px 22px;
-	background-position: 0px center;
-	color: #ffffff;
-	font-family: "0xProto Nerd Font Mono";
-	font-size: 15px;
-	transition: background-position 220ms ease;
-}
-
-#custom-workspaces.workspace-1 {
-	background-position: 0px center;
-}
-
-#custom-workspaces.workspace-2 {
-	background-position: 26px center;
-}
-
-#custom-workspaces.workspace-3 {
-	background-position: 52px center;
-}
-
-#custom-workspaces.workspace-4 {
-	background-position: 78px center;
-}
-
-#custom-workspaces.workspace-5 {
-	background-position: 104px center;
-}
-
-#custom-workspaces.moving-right {
-	background-image: url("assets/workspace-tear-right.svg");
-	background-size: 30px 22px;
-}
-
-#custom-workspaces.moving-left {
-	background-image: url("assets/workspace-tear-left.svg");
-	background-size: 30px 22px;
-}
-
-#custom-workspaces.workspace-1.moving-left,
-#custom-workspaces.workspace-1.moving-right {
-	background-position: -4px center;
-}
-
-#custom-workspaces.workspace-2.moving-left,
-#custom-workspaces.workspace-2.moving-right {
-	background-position: 22px center;
-}
-
-#custom-workspaces.workspace-3.moving-left,
-#custom-workspaces.workspace-3.moving-right {
-	background-position: 48px center;
-}
-
-#custom-workspaces.workspace-4.moving-left,
-#custom-workspaces.workspace-4.moving-right {
-	background-position: 74px center;
-}
-
-#custom-workspaces.workspace-5.moving-left,
-#custom-workspaces.workspace-5.moving-right {
-	background-position: 100px center;
-}
-
 /* Right Modules */
 
 .modules-right {
 	margin-right: 8px;
 }
 
-#custom-media,
 #network,
 #custom-protonvpn,
 #bluetooth,
 #custom-localsend,
+#custom-media,
 #custom-pipewire,
 #battery {
 	margin: 0 6px;
-}
-
-#network,
-#custom-protonvpn,
-#bluetooth,
-#custom-localsend,
-#custom-media,
-#custom-pipewire,
-#battery {
 	min-width: 26px;
 	padding: 0;
 }
 
-#tray {
-	margin: 0;
-	padding: 0;
-	min-width: 0;
-	opacity: 0;
-}
 
 #custom-protonvpn {
 	font-family: "0xProto Nerd Font Mono";
@@ -191,15 +104,6 @@ window#waybar {
 	font-family: "0xProto Nerd Font Mono", "0xProto";
 }
 
-#custom-media.custom-cider,
-#custom-media.custom-vlc {
-	background-color: transparent;
-	color: #ffffff;
-}
-
-#battery icon {
-	color: red;
-}
 
 @keyframes blink {
 	to {
@@ -207,11 +111,30 @@ window#waybar {
 	}
 }
 
+#battery.good {
+	color: #4CAF50;
+}
+
+#battery.warning {
+	color: #FF9800;
+}
+
 #battery.warning:not(.charging) {
-	color: white;
-	animation-name: blink; 
+	animation-name: blink;
 	animation-duration: 0.5s;
-	animation-timing-function: linear; 
-	animation-iteration-count: infinite; 
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+#battery.critical {
+	color: #F44336;
+}
+
+#battery.critical:not(.charging) {
+	animation-name: blink;
+	animation-duration: 0.3s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
 	animation-direction: alternate;
 }

@@ -13,7 +13,7 @@
     // Module Order
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["network", "custom/protonvpn", "bluetooth", "custom/localsend", "custom/pipewire", "custom/media", "battery", "tray"],
+    "modules-right": ["network", "custom/protonvpn", "bluetooth", "custom/localsend", "custom/pipewire", "custom/media", "battery"],
     
     // Module Configuration
     "hyprland/workspaces": {
@@ -26,17 +26,10 @@
             "5": ""
         }
     },
-    "custom/workspaces": {
-        "exec": "~/.config/waybar/scripts/workspaces.sh",
-        "format": "{}",
-        "return-type": "json",
-        "escape": false,
-        "on-click": "hyprctl dispatch workspace e+1",
-        "on-click-right": "hyprctl dispatch workspace e-1"
-    },
     "hyprland/window": {
     	"format": "{}",
-    	"separate-outputs": true
+    	"separate-outputs": true,
+    	"max-length": 50
     },
     "clock": {
         "timezone": "Australia/Melbourne",
@@ -66,13 +59,10 @@
     "custom/protonvpn": {
         "format": "{}",
         "return-type": "json",
-        "interval": 5,
+        "interval": 30,
+        "signal": 9,
         "exec": "~/.config/waybar/scripts/protonvpn-status.py",
         "on-click": "~/.config/waybar/scripts/protonvpn-menu.py"
-    },
-    "tray": {
-        "icon-size": 1,
-        "spacing": 0
     },
     "bluetooth": {
         "format": "󰂲",
@@ -99,7 +89,7 @@
 	    "format": "{}",
         "return-type": "json",
         "signal": 8,
-        "interval": 2,
+        "interval": 30,
         "format-icons": {
             "mute": "", 
 	    "default": ["", "", ""]

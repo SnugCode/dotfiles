@@ -248,6 +248,7 @@ class ProtonVpnMenu(Gtk.Window):
 
     def refresh(self):
         self.rebuild()
+        subprocess.Popen(["pkill", "-RTMIN+9", "waybar"])
         return GLib.SOURCE_REMOVE
 
     def open_proton(self, _button):

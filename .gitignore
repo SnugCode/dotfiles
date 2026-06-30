@@ -28,7 +28,18 @@ mozilla/firefox/*
 !mozilla/firefox/chrome/userContent.css 
 
 google-chrome/
+kdeconnect/ 
+pdfarranger/ 
+libaccounts-glib/ 
+libreoffice/
 
 dolphinrc
 trashrc
-baloofileinformationrc
+baloofileinformationrc 
+kactivitymanagerdrc 
+kconf_updaterc 
+ktimezonedrc 
+mimeapps.list 
+okularpartrc 
+okularrc 
+QtProject.conf 
