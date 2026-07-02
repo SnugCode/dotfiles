@@ -1,0 +1,224 @@
+(defvar bt-popup-visible false)
+
+(defpoll bt-data
+  :interval "2s"
+  :run-while bt-popup-visible
+  :initial `{
+  "powered": false,
+  "has_devices": false,
+  "has_available": false,
+  "d0": {"visible": false, "name": "", "mac": "", "type_icon": "", "connected": false, "status": "", "action_label": ""},
+  "d1": {"visible": false, "name": "", "mac": "", "type_icon": "", "connected": false, "status": "", "action_label": ""},
+  "d2": {"visible": false, "name": "", "mac": "", "type_icon": "", "connected": false, "status": "", "action_label": ""},
+  "d3": {"visible": false, "name": "", "mac": "", "type_icon": "", "connected": false, "status": "", "action_label": ""},
+  "av0": {"visible": false, "name": "", "mac": "", "type_icon": ""},
+  "av1": {"visible": false, "name": "", "mac": "", "type_icon": ""},
+  "av2": {"visible": false, "name": "", "mac": "", "type_icon": ""},
+  "av3": {"visible": false, "name": "", "mac": "", "type_icon": ""}
+}`
+  `~/.config/eww/scripts/bt-data.py`)
+
+(defvar bt-scanning false)
+
+(defpoll ls-data
+  :interval "2s"
+  :run-while bt-popup-visible
+  :initial `{
+  "running": false,
+  "has_devices": false,
+  "has_incoming": false,
+  "ls0": {"visible": false, "id": "", "alias": "", "type_icon": ""},
+  "ls1": {"visible": false, "id": "", "alias": "", "type_icon": ""},
+  "ls2": {"visible": false, "id": "", "alias": "", "type_icon": ""},
+  "ls3": {"visible": false, "id": "", "alias": "", "type_icon": ""},
+  "inc0": {"visible": false, "id": "", "sender": "", "files": ""},
+  "inc1": {"visible": false, "id": "", "sender": "", "files": ""}
+}`
+  `~/.config/eww/scripts/ls-data.py`)
+
+(defwindow bluetooth
+  :monitor 0
+  :geometry (geometry :x "-8px" :y "34px" :anchor "top right" :width "280px")
+  :stacking "fg"
+  :focusable false
+  (bt-menu))
+
+(defwidget bt-menu []
+  (box :class "bt-menu" :orientation "v" :spacing 10 :space-evenly false
+
+    ; Header — always at top, never moves
+    (box :class "bt-header" :orientation "h" :spacing 12 :space-evenly false
+      (label :class "bt-title" :text "Bluetooth"
+             :hexpand true :halign "start" :valign "center")
+      (button :class {bt-data.powered ? "bt-toggle on" : "bt-toggle off"}
+              :valign "center"
+              :onclick `~/.config/eww/scripts/bt-power.sh ${bt-data.powered}`
+        (label :text {bt-data.powered ? "On" : "Off"})))
+
+    ; Device list — only shown when BT is on
+    (box :visible {bt-data.powered} :orientation "v" :spacing 6 :space-evenly false
+
+      ; Paired devices
+      (box :visible {bt-data.d0.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {bt-data.d0.type_icon} :valign "center")
+        (box :orientation "v" :spacing 2 :hexpand true :valign "center" :space-evenly false
+          (label :class "device-name" :text {bt-data.d0.name} :halign "start" :limit-width 20)
+          (label :class {bt-data.d0.connected ? "device-status on" : "device-status"}
+                 :text {bt-data.d0.status} :halign "start"))
+        (button :class {bt-data.d0.connected ? "device-btn disconnect" : "device-btn"}
+                :valign "center"
+                :onclick `~/.config/eww/scripts/bt-toggle-device.sh "${bt-data.d0.mac}" ${bt-data.d0.connected}`
+          (label :text {bt-data.d0.action_label})))
+
+      (box :visible {bt-data.d1.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {bt-data.d1.type_icon} :valign "center")
+        (box :orientation "v" :spacing 2 :hexpand true :valign "center" :space-evenly false
+          (label :class "device-name" :text {bt-data.d1.name} :halign "start" :limit-width 20)
+          (label :class {bt-data.d1.connected ? "device-status on" : "device-status"}
+                 :text {bt-data.d1.status} :halign "start"))
+        (button :class {bt-data.d1.connected ? "device-btn disconnect" : "device-btn"}
+                :valign "center"
+                :onclick `~/.config/eww/scripts/bt-toggle-device.sh "${bt-data.d1.mac}" ${bt-data.d1.connected}`
+          (label :text {bt-data.d1.action_label})))
+
+      (box :visible {bt-data.d2.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {bt-data.d2.type_icon} :valign "center")
+        (box :orientation "v" :spacing 2 :hexpand true :valign "center" :space-evenly false
+          (label :class "device-name" :text {bt-data.d2.name} :halign "start" :limit-width 20)
+          (label :class {bt-data.d2.connected ? "device-status on" : "device-status"}
+                 :text {bt-data.d2.status} :halign "start"))
+        (button :class {bt-data.d2.connected ? "device-btn disconnect" : "device-btn"}
+                :valign "center"
+                :onclick `~/.config/eww/scripts/bt-toggle-device.sh "${bt-data.d2.mac}" ${bt-data.d2.connected}`
+          (label :text {bt-data.d2.action_label})))
+
+      (box :visible {bt-data.d3.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {bt-data.d3.type_icon} :valign "center")
+        (box :orientation "v" :spacing 2 :hexpand true :valign "center" :space-evenly false
+          (label :class "device-name" :text {bt-data.d3.name} :halign "start" :limit-width 20)
+          (label :class {bt-data.d3.connected ? "device-status on" : "device-status"}
+                 :text {bt-data.d3.status} :halign "start"))
+        (button :class {bt-data.d3.connected ? "device-btn disconnect" : "device-btn"}
+                :valign "center"
+                :onclick `~/.config/eww/scripts/bt-toggle-device.sh "${bt-data.d3.mac}" ${bt-data.d3.connected}`
+          (label :text {bt-data.d3.action_label})))
+
+      (label :visible {!bt-data.has_devices} :class "no-devices"
+             :text "No paired devices" :halign "start")
+
+      ; Separator before scan button
+      (box :class "separator")
+
+      ; Scan button
+      (button :class {bt-scanning ? "scan-btn scanning" : "scan-btn"}
+              :onclick `~/.config/eww/scripts/bt-scan.sh`
+        (label :text {bt-scanning ? "Scanning..." : "Scan for Devices"}))
+
+      ; Available (discovered) devices — shown after a scan
+      (box :visible {bt-data.has_available} :orientation "v" :spacing 4 :space-evenly false
+        (label :class "section-label" :text "Available" :halign "start")
+
+        (box :visible {bt-data.av0.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+          (label :class "device-icon nerd" :text {bt-data.av0.type_icon} :valign "center")
+          (label :class "device-name" :text {bt-data.av0.name}
+                 :hexpand true :halign "start" :valign "center" :limit-width 20)
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/bt-pair.sh "${bt-data.av0.mac}"`
+            (label :text "Pair")))
+
+        (box :visible {bt-data.av1.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+          (label :class "device-icon nerd" :text {bt-data.av1.type_icon} :valign "center")
+          (label :class "device-name" :text {bt-data.av1.name}
+                 :hexpand true :halign "start" :valign "center" :limit-width 20)
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/bt-pair.sh "${bt-data.av1.mac}"`
+            (label :text "Pair")))
+
+        (box :visible {bt-data.av2.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+          (label :class "device-icon nerd" :text {bt-data.av2.type_icon} :valign "center")
+          (label :class "device-name" :text {bt-data.av2.name}
+                 :hexpand true :halign "start" :valign "center" :limit-width 20)
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/bt-pair.sh "${bt-data.av2.mac}"`
+            (label :text "Pair")))
+
+        (box :visible {bt-data.av3.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+          (label :class "device-icon nerd" :text {bt-data.av3.type_icon} :valign "center")
+          (label :class "device-name" :text {bt-data.av3.name}
+                 :hexpand true :halign "start" :valign "center" :limit-width 20)
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/bt-pair.sh "${bt-data.av3.mac}"`
+            (label :text "Pair")))))
+
+    ; ── LocalSend ────────────────────────────────────────────
+    (box :class "separator")
+
+    (box :orientation "h" :spacing 12 :space-evenly false
+      (label :class "bt-title" :text "LocalSend"
+             :hexpand true :halign "start" :valign "center")
+      (button :class {ls-data.running ? "bt-toggle on" : "bt-toggle off"}
+              :valign "center"
+              :onclick `~/.config/eww/scripts/ls-toggle.sh ${ls-data.running}`
+        (label :text {ls-data.running ? "On" : "Off"})))
+
+    (box :visible {ls-data.running} :orientation "v" :spacing 6 :space-evenly false
+
+      (label :visible {!ls-data.has_devices} :class "no-devices"
+             :text "No nearby devices" :halign "start")
+
+      (box :visible {ls-data.ls0.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {ls-data.ls0.type_icon} :valign "center")
+        (label :class "device-name" :text {ls-data.ls0.alias}
+               :hexpand true :halign "start" :valign "center" :limit-width 18)
+        (button :class "device-btn" :valign "center"
+                :onclick `~/.config/eww/scripts/ls-send.sh "${ls-data.ls0.id}"`
+          (label :text "Send")))
+
+      (box :visible {ls-data.ls1.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {ls-data.ls1.type_icon} :valign "center")
+        (label :class "device-name" :text {ls-data.ls1.alias}
+               :hexpand true :halign "start" :valign "center" :limit-width 18)
+        (button :class "device-btn" :valign "center"
+                :onclick `~/.config/eww/scripts/ls-send.sh "${ls-data.ls1.id}"`
+          (label :text "Send")))
+
+      (box :visible {ls-data.ls2.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {ls-data.ls2.type_icon} :valign "center")
+        (label :class "device-name" :text {ls-data.ls2.alias}
+               :hexpand true :halign "start" :valign "center" :limit-width 18)
+        (button :class "device-btn" :valign "center"
+                :onclick `~/.config/eww/scripts/ls-send.sh "${ls-data.ls2.id}"`
+          (label :text "Send")))
+
+      (box :visible {ls-data.ls3.visible} :class "device-row" :orientation "h" :spacing 10 :space-evenly false
+        (label :class "device-icon nerd" :text {ls-data.ls3.type_icon} :valign "center")
+        (label :class "device-name" :text {ls-data.ls3.alias}
+               :hexpand true :halign "start" :valign "center" :limit-width 18)
+        (button :class "device-btn" :valign "center"
+                :onclick `~/.config/eww/scripts/ls-send.sh "${ls-data.ls3.id}"`
+          (label :text "Send")))
+
+      (box :visible {ls-data.has_incoming} :orientation "v" :spacing 4 :space-evenly false
+        (label :class "section-label" :text "Incoming" :halign "start")
+
+        (box :visible {ls-data.inc0.visible} :class "device-row" :orientation "h" :spacing 6 :space-evenly false
+          (box :orientation "v" :spacing 2 :hexpand true :valign "center" :space-evenly false
+            (label :class "device-name" :text {ls-data.inc0.sender} :halign "start" :limit-width 14)
+            (label :class "device-status" :text {ls-data.inc0.files} :halign "start" :limit-width 20))
+          (button :class "accept-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/ls-decide.sh accept "${ls-data.inc0.id}"`
+            (label :text "✓"))
+          (button :class "device-btn disconnect" :valign "center"
+                  :onclick `~/.config/eww/scripts/ls-decide.sh reject "${ls-data.inc0.id}"`
+            (label :text "✗")))
+
+        (box :visible {ls-data.inc1.visible} :class "device-row" :orientation "h" :spacing 6 :space-evenly false
+          (box :orientation "v" :spacing 2 :hexpand true :valign "center" :space-evenly false
+            (label :class "device-name" :text {ls-data.inc1.sender} :halign "start" :limit-width 14)
+            (label :class "device-status" :text {ls-data.inc1.files} :halign "start" :limit-width 20))
+          (button :class "accept-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/ls-decide.sh accept "${ls-data.inc1.id}"`
+            (label :text "✓"))
+          (button :class "device-btn disconnect" :valign "center"
+                  :onclick `~/.config/eww/scripts/ls-decide.sh reject "${ls-data.inc1.id}"`
+            (label :text "✗")))))))
