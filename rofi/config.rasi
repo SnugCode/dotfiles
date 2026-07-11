@@ -1,5 +1,5 @@
 configuration {
-    modes: [ drun ];
+    modes: [ drun, calc ];
 
     font: "0xProto Nerd Font Mono";
     
