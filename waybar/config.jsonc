@@ -13,7 +13,7 @@
     // Module Order
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["network", "custom/protonvpn", "bluetooth", "custom/pipewire", "custom/media", "battery"],
+    "modules-right": ["network", "custom/protonvpn", "bluetooth", "custom/pipewire", "battery"],
     
     // Module Configuration
     "hyprland/workspaces": {
@@ -47,7 +47,7 @@
         },
         "escape": true,
         "exec": "~/.config/waybar/scripts/mediaplayer.py 2> /dev/null", 
-        "on-click": "~/.config/waybar/scripts/media-menu.py"
+        "on-click": "~/.config/eww/scripts/audio-toggle.sh"
     },
     "network": {
         "format-wifi": "",
@@ -89,7 +89,7 @@
 	    "default": ["", "", ""]
 	    },
 	    "exec": "~/.config/waybar/scripts/pipewire-status.sh",
-	    "on-click": "~/.config/waybar/scripts/volume-slider.py"
+	    "on-click": "~/.config/eww/scripts/audio-toggle.sh"
     },
     "battery": {
         "bat": "BAT0",
@@ -107,7 +107,7 @@
             "",
             ""
         ],
-        "format-plugged": "", 
+        "format-plugged": "{icon}",
         "tooltip-format-charging": "Charging: {capacity}%",
 	    "tooltip-format": "{capacity}%"
     }

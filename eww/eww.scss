@@ -15,6 +15,10 @@ button {
   margin: 0;
 }
 
+.nerd {
+  font-family: "0xProto Nerd Font Mono";
+}
+
 .bt-menu {
   background: rgba(18, 18, 18, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -99,6 +103,88 @@ button {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.4);
   padding: 2px 0;
+}
+
+/* Scale (volume + progress) */
+scale trough {
+  min-height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+scale highlight {
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+scale slider {
+  min-width: 12px;
+  min-height: 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: none;
+  margin: 0;
+}
+
+.vol-icon-btn {
+  min-width: 28px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+
+  label {
+    font-family: "0xProto Nerd Font Mono";
+    font-size: 18px;
+    color: #ffffff;
+  }
+
+  &.muted label { color: rgba(255, 255, 255, 0.3); }
+}
+
+.vol-pct {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  min-width: 34px;
+}
+
+.player-icon {
+  font-size: 24px;
+  min-width: 30px;
+}
+
+.media-title {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.media-artist {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.media-time {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.control-btn {
+  border-radius: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.10);
+  min-width: 44px;
+  box-shadow: none;
+
+  label {
+    font-family: "0xProto Nerd Font Mono";
+    font-size: 18px;
+    color: #ffffff;
+  }
+
+  &.play-btn {
+    background: rgba(255, 255, 255, 0.16);
+    padding: 6px 20px;
+  }
 }
 
 .bt-toggle {

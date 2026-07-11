@@ -112,14 +112,15 @@ window#waybar {
 }
 
 #battery.good {
+	color: #ffffff;
+}
+
+#battery.charging {
 	color: #4CAF50;
 }
 
-#battery.warning {
-	color: #FF9800;
-}
-
 #battery.warning:not(.charging) {
+	color: #FF9800;
 	animation-name: blink;
 	animation-duration: 0.5s;
 	animation-timing-function: linear;
@@ -127,11 +128,8 @@ window#waybar {
 	animation-direction: alternate;
 }
 
-#battery.critical {
-	color: #F44336;
-}
-
 #battery.critical:not(.charging) {
+	color: #F44336;
 	animation-name: blink;
 	animation-duration: 0.3s;
 	animation-timing-function: linear;

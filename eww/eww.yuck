@@ -1,5 +1,19 @@
 (defvar bt-popup-visible false)
 
+(defvar audio-popup-visible false)
+
+(defpoll volume-data
+  :interval "1s"
+  :run-while audio-popup-visible
+  :initial `{"volume": 50, "muted": false, "icon": "", "percent": "50%"}`
+  `~/.config/eww/scripts/volume-data.sh`)
+
+(defpoll media-data
+  :interval "2s"
+  :run-while audio-popup-visible
+  :initial `{"has_player": false, "player": "", "player_icon": "󰝚", "title": "Nothing playing", "artist": "", "album": "", "status": "Stopped", "status_icon": "󰐊", "progress": 0, "position_str": "0:00", "length_str": "0:00", "length_us": 0}`
+  `~/.config/eww/scripts/media-data.py`)
+
 (defpoll bt-data
   :interval "2s"
   :run-while bt-popup-visible
@@ -222,3 +236,59 @@
           (button :class "device-btn disconnect" :valign "center"
                   :onclick `~/.config/eww/scripts/ls-decide.sh reject "${ls-data.inc1.id}"`
             (label :text "✗")))))))
+
+; ── Audio + Media popup ───────────────────────────────────────────────────────
+
+(defwindow audio
+  :monitor 0
+  :geometry (geometry :x "-8px" :y "34px" :anchor "top right" :width "280px")
+  :stacking "fg"
+  :focusable false
+  (audio-menu))
+
+(defwidget audio-menu []
+  (box :class "bt-menu" :orientation "v" :spacing 10 :space-evenly false
+
+    ; Volume row
+    (box :orientation "h" :spacing 10 :space-evenly false :valign "center"
+      (button :class {volume-data.muted ? "vol-icon-btn muted" : "vol-icon-btn"}
+              :valign "center"
+              :onclick `wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle`
+        (label :class "nerd" :text {volume-data.icon}))
+      (scale :hexpand true :min 0 :max 150 :value {volume-data.volume}
+             :onchange `wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%`)
+      (label :class "vol-pct" :text {volume-data.percent} :valign "center"))
+
+    (box :class "separator")
+
+    ; No player
+    (label :visible {!media-data.has_player} :class "no-devices"
+           :text "Nothing playing" :halign "start")
+
+    ; Media player
+    (box :visible {media-data.has_player} :orientation "v" :spacing 8 :space-evenly false
+
+      (box :orientation "v" :spacing 2 :hexpand true :valign "center" :space-evenly false
+        (label :class "media-title" :text {media-data.title}
+               :halign "start" :limit-width 28)
+        (label :class "media-artist" :text {media-data.artist}
+               :halign "start" :limit-width 32))
+
+      (box :orientation "v" :spacing 2 :space-evenly false
+        (scale :min 0 :max 100 :value {media-data.progress}
+               :onchange `~/.config/eww/scripts/media-seek.sh {}`)
+        (box :orientation "h" :space-evenly false
+          (label :class "media-time" :text {media-data.position_str})
+          (label :class "media-time" :text {media-data.length_str}
+                 :hexpand true :halign "end")))
+
+      (box :orientation "h" :spacing 8 :halign "center" :space-evenly false
+        (button :class "control-btn" :valign "center"
+                :onclick `playerctl previous`
+          (label :class "nerd" :text "󰒮"))
+        (button :class "control-btn play-btn" :valign "center"
+                :onclick `playerctl play-pause`
+          (label :class "nerd" :text {media-data.status_icon}))
+        (button :class "control-btn" :valign "center"
+                :onclick `playerctl next`
+          (label :class "nerd" :text "󰒭"))))))
