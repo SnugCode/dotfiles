@@ -237,6 +237,199 @@
                   :onclick `~/.config/eww/scripts/ls-decide.sh reject "${ls-data.inc1.id}"`
             (label :text "✗")))))))
 
+; ── Network + VPN popup ──────────────────────────────────────────────────────
+
+(defvar network-popup-visible false)
+
+(defpoll network-data
+  :interval "3s"
+  :run-while network-popup-visible
+  :initial `{"wifi_enabled": false, "net_icon": "", "connected_ssid": "", "connected_signal": 0, "connected_signal_str": "", "has_known": false, "has_available": false, "k0": {"visible": false, "ssid": "", "signal": 0, "signal_str": "", "icon": ""}, "k1": {"visible": false, "ssid": "", "signal": 0, "signal_str": "", "icon": ""}, "k2": {"visible": false, "ssid": "", "signal": 0, "signal_str": "", "icon": ""}, "a0": {"visible": false, "ssid": "", "signal": 0, "signal_str": "", "icon": ""}, "a1": {"visible": false, "ssid": "", "signal": 0, "signal_str": "", "icon": ""}, "a2": {"visible": false, "ssid": "", "signal": 0, "signal_str": "", "icon": ""}, "vpn_connected": false, "vpn_server": ""}`
+  `~/.config/eww/scripts/network-data.sh`)
+
+(defwindow network
+  :monitor 0
+  :geometry (geometry :x "-8px" :y "34px" :anchor "top right" :width "270px")
+  :stacking "fg"
+  :focusable false
+  (network-menu))
+
+(defwidget network-menu []
+  (box :class "bt-menu" :orientation "v" :spacing 10 :space-evenly false
+
+    ; WiFi header
+    (box :orientation "h" :spacing 12 :space-evenly false
+      (label :class "bt-title" :text "WiFi"
+             :hexpand true :halign "start" :valign "center")
+      (button :class {network-data.wifi_enabled ? "bt-toggle on" : "bt-toggle off"}
+              :valign "center"
+              :onclick `~/.config/eww/scripts/wifi-toggle.sh ${network-data.wifi_enabled}`
+        (label :text {network-data.wifi_enabled ? "On" : "Off"})))
+
+    ; WiFi off label
+    (label :visible {!network-data.wifi_enabled}
+           :class "no-devices" :text "WiFi is off" :halign "start")
+
+    ; WiFi content
+    (box :visible {network-data.wifi_enabled} :orientation "v" :spacing 6 :space-evenly false
+
+      ; Connected network
+      (box :visible {network-data.connected_ssid != ""} :orientation "h" :spacing 8 :space-evenly false
+        (label :class "nerd net-icon" :text {network-data.net_icon} :valign "center")
+        (label :class "device-name" :text {network-data.connected_ssid}
+               :hexpand true :halign "start" :valign "center" :limit-width 16)
+        (label :class {network-data.connected_signal > 66 ? "sig-strong" : network-data.connected_signal > 33 ? "sig-medium" : "sig-weak"}
+               :text {network-data.connected_signal_str} :valign "center"))
+      (label :visible {network-data.connected_ssid == ""}
+             :class "no-devices" :text "Not connected" :halign "start")
+
+      ; Saved networks
+      (box :visible {network-data.has_known} :orientation "v" :spacing 4 :space-evenly false
+        (box :class "separator")
+        (label :class "section-label" :text "Saved" :halign "start")
+
+        (box :visible {network-data.k0.visible} :class "device-row" :orientation "h" :spacing 8 :space-evenly false
+          (label :class "nerd net-icon" :text {network-data.k0.icon} :valign "center")
+          (label :class "device-name" :text {network-data.k0.ssid}
+                 :hexpand true :halign "start" :valign "center" :limit-width 13)
+          (label :class {network-data.k0.signal > 66 ? "sig-strong" : network-data.k0.signal > 33 ? "sig-medium" : "sig-weak"}
+                 :text {network-data.k0.signal_str} :valign "center")
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/wifi-connect.sh "${network-data.k0.ssid}" saved`
+            (label :text "Connect")))
+
+        (box :visible {network-data.k1.visible} :class "device-row" :orientation "h" :spacing 8 :space-evenly false
+          (label :class "nerd net-icon" :text {network-data.k1.icon} :valign "center")
+          (label :class "device-name" :text {network-data.k1.ssid}
+                 :hexpand true :halign "start" :valign "center" :limit-width 13)
+          (label :class {network-data.k1.signal > 66 ? "sig-strong" : network-data.k1.signal > 33 ? "sig-medium" : "sig-weak"}
+                 :text {network-data.k1.signal_str} :valign "center")
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/wifi-connect.sh "${network-data.k1.ssid}" saved`
+            (label :text "Connect")))
+
+        (box :visible {network-data.k2.visible} :class "device-row" :orientation "h" :spacing 8 :space-evenly false
+          (label :class "nerd net-icon" :text {network-data.k2.icon} :valign "center")
+          (label :class "device-name" :text {network-data.k2.ssid}
+                 :hexpand true :halign "start" :valign "center" :limit-width 13)
+          (label :class {network-data.k2.signal > 66 ? "sig-strong" : network-data.k2.signal > 33 ? "sig-medium" : "sig-weak"}
+                 :text {network-data.k2.signal_str} :valign "center")
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/wifi-connect.sh "${network-data.k2.ssid}" saved`
+            (label :text "Connect"))))
+
+      ; Available networks
+      (box :visible {network-data.has_available} :orientation "v" :spacing 4 :space-evenly false
+        (box :class "separator")
+        (label :class "section-label" :text "Available" :halign "start")
+
+        (box :visible {network-data.a0.visible} :class "device-row" :orientation "h" :spacing 8 :space-evenly false
+          (label :class "nerd net-icon" :text {network-data.a0.icon} :valign "center")
+          (label :class "device-name" :text {network-data.a0.ssid}
+                 :hexpand true :halign "start" :valign "center" :limit-width 13)
+          (label :class {network-data.a0.signal > 66 ? "sig-strong" : network-data.a0.signal > 33 ? "sig-medium" : "sig-weak"}
+                 :text {network-data.a0.signal_str} :valign "center")
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/wifi-connect.sh "${network-data.a0.ssid}" available`
+            (label :text "Connect")))
+
+        (box :visible {network-data.a1.visible} :class "device-row" :orientation "h" :spacing 8 :space-evenly false
+          (label :class "nerd net-icon" :text {network-data.a1.icon} :valign "center")
+          (label :class "device-name" :text {network-data.a1.ssid}
+                 :hexpand true :halign "start" :valign "center" :limit-width 13)
+          (label :class {network-data.a1.signal > 66 ? "sig-strong" : network-data.a1.signal > 33 ? "sig-medium" : "sig-weak"}
+                 :text {network-data.a1.signal_str} :valign "center")
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/wifi-connect.sh "${network-data.a1.ssid}" available`
+            (label :text "Connect")))
+
+        (box :visible {network-data.a2.visible} :class "device-row" :orientation "h" :spacing 8 :space-evenly false
+          (label :class "nerd net-icon" :text {network-data.a2.icon} :valign "center")
+          (label :class "device-name" :text {network-data.a2.ssid}
+                 :hexpand true :halign "start" :valign "center" :limit-width 13)
+          (label :class {network-data.a2.signal > 66 ? "sig-strong" : network-data.a2.signal > 33 ? "sig-medium" : "sig-weak"}
+                 :text {network-data.a2.signal_str} :valign "center")
+          (button :class "device-btn" :valign "center"
+                  :onclick `~/.config/eww/scripts/wifi-connect.sh "${network-data.a2.ssid}" available`
+            (label :text "Connect")))))
+
+    ; VPN section
+    (box :visible {network-data.wifi_enabled} :orientation "v" :spacing 8 :space-evenly false
+      (box :class "separator")
+
+      (box :orientation "h" :spacing 12 :space-evenly false
+        (label :class "bt-title" :text "VPN"
+               :hexpand true :halign "start" :valign "center")
+        (button :class {network-data.vpn_connected ? "bt-toggle on" : "bt-toggle off"}
+                :valign "center"
+                :onclick `~/.config/eww/scripts/vpn-toggle.sh ${network-data.vpn_connected}`
+          (label :text {network-data.vpn_connected ? "On" : "Off"})))
+
+      ; Connected — show server info
+      (label :visible {network-data.vpn_connected}
+             :class "device-status on" :text {network-data.vpn_server} :halign "start")
+
+      ; Disconnected — quick connect options
+      (box :visible {!network-data.vpn_connected} :orientation "v" :spacing 6 :space-evenly false
+        (box :orientation "h" :spacing 6 :space-evenly false
+          (button :class "vpn-quick-btn" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh fastest`
+            (label :text "Fastest"))
+          (button :class "vpn-quick-btn" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh p2p`
+            (label :text "P2P")))
+
+        (label :class "vpn-cat-label" :text "Streaming" :halign "start")
+        (box :orientation "h" :spacing 6 :space-evenly false
+          (button :class "vpn-country-btn streaming" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh US`
+            (label :text "US"))
+          (button :class "vpn-country-btn streaming" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh CA`
+            (label :text "CA"))
+          (button :class "vpn-country-btn streaming" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh JP`
+            (label :text "JP")))
+
+        (label :class "vpn-cat-label" :text "Torrenting" :halign "start")
+        (box :orientation "h" :spacing 6 :space-evenly false
+          (button :class "vpn-country-btn torrent" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh SG`
+            (label :text "SG"))
+          (button :class "vpn-country-btn torrent" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh RO`
+            (label :text "RO"))
+          (button :class "vpn-country-btn torrent" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh ES`
+            (label :text "ES")))
+
+        (label :class "vpn-cat-label" :text "Privacy" :halign "start")
+        (box :orientation "h" :spacing 6 :space-evenly false
+          (button :class "vpn-country-btn privacy" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh CH`
+            (label :text "CH"))
+          (button :class "vpn-country-btn privacy" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh IS`
+            (label :text "IS"))
+          (button :class "vpn-country-btn privacy" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh PA`
+            (label :text "PA")))
+
+        (label :class "vpn-cat-label" :text "Misc" :halign "start")
+        (box :orientation "h" :spacing 6 :space-evenly false
+          (button :class "vpn-country-btn misc" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh LK`
+            (label :text "LK"))
+          (button :class "vpn-country-btn misc" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh PG`
+            (label :text "PG"))
+          (button :class "vpn-country-btn misc" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh NZ`
+            (label :text "NZ"))
+          (button :class "vpn-country-btn misc" :hexpand true
+                  :onclick `~/.config/eww/scripts/vpn-connect.sh AU`
+            (label :text "AU")))))))
+
 ; ── Audio + Media popup ───────────────────────────────────────────────────────
 
 (defwindow audio

@@ -187,6 +187,61 @@ scale slider {
   }
 }
 
+.net-icon {
+  font-size: 14px;
+  min-width: 20px;
+}
+
+.sig-strong { font-size: 11px; color: #4CAF50; min-width: 30px; }
+.sig-medium { font-size: 11px; color: #FF9800; min-width: 30px; }
+.sig-weak   { font-size: 11px; color: #F44336; min-width: 30px; }
+
+.vpn-quick-btn {
+  border-radius: 6px;
+  padding: 5px 0;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.vpn-cat-label {
+  font-size: 10px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.35);
+  padding: 2px 0 0;
+}
+
+.vpn-country-btn {
+  border-radius: 6px;
+  padding: 4px 0;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+
+  &.streaming {
+    background: rgba(156, 39, 176, 0.18);
+    color: #CE93D8;
+  }
+
+  &.torrent {
+    background: rgba(255, 152, 0, 0.18);
+    color: #FFCC80;
+  }
+
+  &.privacy {
+    background: rgba(76, 175, 80, 0.18);
+    color: #A5D6A7;
+  }
+
+  &.misc {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.55);
+  }
+}
+
 .bt-toggle {
   border-radius: 99px;
   padding: 5px 0;

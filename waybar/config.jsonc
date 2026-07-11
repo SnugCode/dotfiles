@@ -13,7 +13,7 @@
     // Module Order
     "modules-left": ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["network", "custom/protonvpn", "bluetooth", "custom/pipewire", "battery"],
+    "modules-right": ["custom/network", "bluetooth", "custom/pipewire", "battery"],
     
     // Module Configuration
     "hyprland/workspaces": {
@@ -49,20 +49,13 @@
         "exec": "~/.config/waybar/scripts/mediaplayer.py 2> /dev/null", 
         "on-click": "~/.config/eww/scripts/audio-toggle.sh"
     },
-    "network": {
-        "format-wifi": "",
-        "format-ethernet": "{ipaddr}/{cidr} ",
-        "format-disconnected": "Disconnected ⚠", 
-	    "tooltip-format": "{essid}", 
-	    "on-click": "~/.config/waybar/scripts/wifi-menu.py"
-    },
-    "custom/protonvpn": {
+    "custom/network": {
         "format": "{}",
         "return-type": "json",
-        "interval": 30,
-        "signal": 9,
-        "exec": "~/.config/waybar/scripts/protonvpn-status.py",
-        "on-click": "~/.config/waybar/scripts/protonvpn-menu.py"
+        "interval": 10,
+        "signal": 7,
+        "exec": "~/.config/eww/scripts/network-status.sh",
+        "on-click": "~/.config/eww/scripts/network-toggle.sh"
     },
     "bluetooth": {
         "format": "󰂲",

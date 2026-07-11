@@ -69,8 +69,7 @@ window#waybar {
 	margin-right: 8px;
 }
 
-#network,
-#custom-protonvpn,
+#custom-network,
 #custom-media,
 #custom-pipewire,
 #battery {
@@ -79,16 +78,32 @@ window#waybar {
 	padding: 0;
 }
 
+#custom-network {
+	font-family: "0xProto Nerd Font Mono";
+	font-size: 18px;
+}
+
+#custom-network.disconnected {
+	color: #F44336;
+}
+
+#custom-network.on {
+	color: #ffffff;
+}
+
+#custom-network.connected {
+	color: #4CAF50;
+}
+
+#custom-network.vpn {
+	color: #4CAF50;
+}
+
 #bluetooth {
 	margin: 0 6px;
 	min-width: 26px;
 	padding: 0;
 	color: #2196F3;
-}
-
-
-#custom-protonvpn {
-	font-family: "0xProto Nerd Font Mono";
 }
 
 #custom-pipewire {
