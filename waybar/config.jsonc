@@ -27,9 +27,16 @@
         }
     },
     "hyprland/window": {
-    	"format": "{}",
-    	"separate-outputs": true,
-    	"max-length": 50
+        "format": "{class}  {title}",
+        "rewrite": {
+            "firefox  (.*)": "󰈹  $1",
+            "kitty  (.*)": "  $1",
+            "codium  (.*)": "󰨞  $1",
+            "Cider  (.*)": "󰎆  $1",
+            "org\\.kde\\.dolphin  (.*)": "󰉋  $1"
+        },
+        "separate-outputs": true,
+        "max-length": 50
     },
     "clock": {
         "timezone": "Australia/Melbourne",
@@ -102,6 +109,7 @@
         ],
         "format-plugged": "{icon}",
         "tooltip-format-charging": "Charging: {capacity}%",
-	    "tooltip-format": "{capacity}%"
+        "tooltip-format": "{capacity}%",
+        "on-click": "~/.config/eww/scripts/battery-toggle.sh"
     }
 }

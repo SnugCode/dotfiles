@@ -242,6 +242,47 @@ scale slider {
   }
 }
 
+.battery-pct {
+  font-size: 15px;
+  font-weight: bold;
+  color: #ffffff;
+
+  &.charging { color: #4CAF50; }
+}
+
+.profile-btn {
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+
+  .profile-icon {
+    font-family: "0xProto Nerd Font Mono";
+    font-size: 18px;
+    min-width: 24px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .profile-name {
+    font-size: 13px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .profile-desc {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  &.active {
+    background: rgba(33, 150, 243, 0.18);
+
+    .profile-icon { color: #90CAF9; }
+    .profile-name { color: #ffffff; }
+    .profile-desc { color: rgba(144, 202, 249, 0.6); }
+  }
+}
+
 .bt-toggle {
   border-radius: 99px;
   padding: 5px 0;

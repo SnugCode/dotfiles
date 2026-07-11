@@ -52,7 +52,7 @@
 
 (defwindow bluetooth
   :monitor 0
-  :geometry (geometry :x "-8px" :y "34px" :anchor "top right" :width "280px")
+  :geometry (geometry :x "16px" :y "34px" :anchor "top right" :width "280px")
   :stacking "fg"
   :focusable false
   (bt-menu))
@@ -241,6 +241,14 @@
 
 (defvar network-popup-visible false)
 
+(defvar battery-popup-visible false)
+
+(defpoll battery-data
+  :interval "10s"
+  :run-while battery-popup-visible
+  :initial `{"capacity": 0, "charging": false, "profile": "normal", "profile_label": "Normal"}`
+  `~/.config/eww/scripts/battery-data.sh`)
+
 (defpoll network-data
   :interval "3s"
   :run-while network-popup-visible
@@ -249,7 +257,7 @@
 
 (defwindow network
   :monitor 0
-  :geometry (geometry :x "-8px" :y "34px" :anchor "top right" :width "270px")
+  :geometry (geometry :x "16px" :y "34px" :anchor "top right" :width "270px")
   :stacking "fg"
   :focusable false
   (network-menu))
@@ -430,11 +438,64 @@
                   :onclick `~/.config/eww/scripts/vpn-connect.sh AU`
             (label :text "AU")))))))
 
+; ── Battery + Power Profile popup ────────────────────────────────────────────
+
+(defwindow battery
+  :monitor 0
+  :geometry (geometry :x "16px" :y "34px" :anchor "top right" :width "220px")
+  :stacking "fg"
+  :focusable false
+  (battery-menu))
+
+(defwidget battery-menu []
+  (box :class "bt-menu" :orientation "v" :spacing 10 :space-evenly false
+
+    ; Header
+    (box :orientation "h" :spacing 8 :space-evenly false
+      (label :class "bt-title" :text "Battery" :hexpand true :halign "start" :valign "center")
+      (label :class {battery-data.charging ? "battery-pct charging" : "battery-pct"}
+             :text {battery-data.capacity + "%"} :halign "end" :valign "center"))
+
+    (label :class {battery-data.charging ? "device-status on" : "device-status"}
+           :text {battery-data.charging ? "Charging" : "On Battery"}
+           :halign "start")
+
+    (box :class "separator")
+
+    ; Power Profile section
+    (label :class "bt-title" :text "Power Profile" :halign "start")
+    (label :class "device-status on" :text {battery-data.profile_label} :halign "start")
+
+    (box :orientation "v" :spacing 6 :space-evenly false
+      (button :class {battery-data.profile == "normal" ? "profile-btn active" : "profile-btn"}
+              :onclick `~/.config/eww/scripts/battery-profile.sh normal`
+        (box :orientation "h" :spacing 8 :space-evenly false
+          (label :class "profile-icon" :text "󰓡")
+          (box :orientation "v" :spacing 0 :space-evenly false :hexpand true :halign "start"
+            (label :class "profile-name" :text "Normal" :halign "start")
+            (label :class "profile-desc" :text "Balanced power" :halign "start"))))
+
+      (button :class {battery-data.profile == "content" ? "profile-btn active" : "profile-btn"}
+              :onclick `~/.config/eww/scripts/battery-profile.sh content`
+        (box :orientation "h" :spacing 8 :space-evenly false
+          (label :class "profile-icon" :text "󰿎")
+          (box :orientation "v" :spacing 0 :space-evenly false :hexpand true :halign "start"
+            (label :class "profile-name" :text "Content" :halign "start")
+            (label :class "profile-desc" :text "Audio & visual focus" :halign "start"))))
+
+      (button :class {battery-data.profile == "coding" ? "profile-btn active" : "profile-btn"}
+              :onclick `~/.config/eww/scripts/battery-profile.sh coding`
+        (box :orientation "h" :spacing 8 :space-evenly false
+          (label :class "profile-icon" :text "󰘧")
+          (box :orientation "v" :spacing 0 :space-evenly false :hexpand true :halign "start"
+            (label :class "profile-name" :text "Coding" :halign "start")
+            (label :class "profile-desc" :text "Battery saver" :halign "start")))))))
+
 ; ── Audio + Media popup ───────────────────────────────────────────────────────
 
 (defwindow audio
   :monitor 0
-  :geometry (geometry :x "-8px" :y "34px" :anchor "top right" :width "280px")
+  :geometry (geometry :x "16px" :y "34px" :anchor "top right" :width "280px")
   :stacking "fg"
   :focusable false
   (audio-menu))

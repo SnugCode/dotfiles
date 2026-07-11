@@ -78,6 +78,10 @@ window#waybar {
 	padding: 0;
 }
 
+#window {
+	font-family: "0xProto Nerd Font Mono", "0xProto", sans-serif;
+}
+
 #custom-network {
 	font-family: "0xProto Nerd Font Mono";
 	font-size: 18px;
