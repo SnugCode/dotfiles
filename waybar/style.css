@@ -110,6 +110,7 @@ window#waybar {
 	font-family: "0xProto Nerd Font Mono";
 	font-size: 18px;
 	min-width: 30px;
+	color: #FFA500;
 }
 
 #custom-media {
