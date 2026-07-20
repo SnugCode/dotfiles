@@ -36,6 +36,13 @@ user_pref("privacy.globalprivacycontrol.enabled", true);
 user_pref("privacy.trackingprotection.enabled", true);
 user_pref("privacy.trackingprotection.socialtracking.enabled", true);
 
+// Explicit resets — these were set previously and linger in prefs.js unless overridden here.
+user_pref("gfx.webrender.all", false);
+user_pref("gfx.webrender.compositor.force-enabled", false);
+user_pref("gfx.canvas.accelerated", false);
+user_pref("media.ffmpeg.vaapi.enabled", false);
+user_pref("media.hardware-video-decoding.force-enabled", false);
+
 // UI and scrolling feel.
 user_pref("browser.compactmode.show", true);
 user_pref("browser.tabs.inTitlebar", 1);
