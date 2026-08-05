@@ -3,20 +3,20 @@
     follow = none
 
     ### Geometry ###
-    width = 320
+    width = 360
     height = (0, 300)
     origin = top-right
-    offset = (16, 50)
+    offset = (16, 46)
     scale = 0
-    notification_limit = 10
+    notification_limit = 5
 
     ### Progress bar ###
     progress_bar = true
-    progress_bar_height = 8
-    progress_bar_frame_width = 1
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
     progress_bar_min_width = 150
     progress_bar_max_width = 300
-    progress_bar_corner_radius = 4
+    progress_bar_corner_radius = 2
     progress_bar_corners = all
 
     ### Icons ###
@@ -25,17 +25,17 @@
 
     indicate_hidden = yes
     separator_height = 0
-    padding = 12
-    horizontal_padding = 12
-    text_icon_padding = 10
-    frame_width = 2
+    padding = 14
+    horizontal_padding = 14
+    text_icon_padding = 12
+    frame_width = 1
     gap_size = 8
     separator_color = frame
     sort = urgency_descending
 
     ### Text ###
-    font = 0xProto Nerd Font Mono 11
-    line_height = 2
+    font = Inter 12
+    line_height = 3
     markup = full
     format = "<b>%s</b>\n%b"
     alignment = left
@@ -49,10 +49,10 @@
 
     ### Icons ###
     enable_recursive_icon_lookup = true
-    icon_theme = Adwaita
+    icon_theme = breeze-dark
     icon_position = left
     min_icon_size = 32
-    max_icon_size = 64
+    max_icon_size = 48
 
     ### History ###
     sticky_history = yes
@@ -61,11 +61,12 @@
     ### Misc ###
     browser = /usr/bin/xdg-open
     always_run_script = true
-    corner_radius = 10
+    corner_radius = 14
     corners = all
     ignore_dbusclose = false
 
     ### Wayland ###
+    layer = overlay
     force_xwayland = false
 
     ### Mouse ###
@@ -78,22 +79,22 @@
     pause_on_mouse_over = true
 
 [urgency_low]
-    background = "#1e1e2e"
-    foreground = "#6c7086"
-    frame_color = "#313244"
-    timeout = 10
+    background = "#12121CBF"
+    foreground = "#88889999"
+    frame_color = "#FFFFFF18"
+    timeout = 8
     default_icon = dialog-information
 
 [urgency_normal]
-    background = "#1e1e2e"
-    foreground = "#cdd6f4"
-    frame_color = "#89b4fa"
+    background = "#12121CC7"
+    foreground = "#FFFFFFFF"
+    frame_color = "#FFFFFF38"
     timeout = 10
     default_icon = dialog-information
 
 [urgency_critical]
-    background = "#1e1e2e"
-    foreground = "#cdd6f4"
-    frame_color = "#f38ba8"
+    background = "#12121CC7"
+    foreground = "#FFFFFFFF"
+    frame_color = "#E05C5CFF"
     timeout = 0
     default_icon = dialog-warning

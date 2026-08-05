@@ -1,94 +1,111 @@
 configuration {
-    modes: [ drun, calc ];
+    modes:               "drun,calc";
+    font:                "Inter 14";
+    display-drun:        "";
+    display-calc:        "";
+    show-icons:          true;
+    icon-theme:          "breeze-dark";
+    drun-display-format: "{name}";
+}
 
-    font: "0xProto Nerd Font Mono";
-    
-    display-run: "Execute";
-
+* {
+    text-color:        #FFFFFF;
+    background-color:  transparent;
 }
 
 window {
-    width: 1000px; 
-    height: 782px;
-    background-color: transparent;
-    padding: 0px;
-    children: [ mainbox ];
+    location:          north;
+    anchor:            north;
+    x-offset:          0px;
+    y-offset:          220px;
+    width:             620px;
+    background-color:  rgba(18, 18, 28, 0.78);
+    border:            1px solid;
+    border-color:      rgba(255, 255, 255, 0.22);
+    border-radius:     16px;
+    padding:           0px;
 }
 
-mainbox{
-    orientation: horizontal;
-    spacing: 0px;
-    children: [ "left-column", "listview" ]; 
-
-    width: 100%; 
-    height: 100%;
+mainbox {
+    orientation:       vertical;
+    spacing:           0px;
+    padding:           0px;
+    children:          [ "inputbar", "separator", "listview" ];
 }
 
-left-column{
-    orientation: vertical;
-    width: 380px;
-    height: 782px;
-    expand: false;
-
-    background-color: #000000; 
-
-    children: [ "search-section", "image-section" ];
-}
-
-search-section {
-    orientation: vertical;
-    height: 42px;
-    width: 100%;
-    expand: false;
-    padding: 4px 12px;
-    children: [ "inputbar" ];
-}
-
-image-section {
-    width: 100%;
-    height: 740px;
-    expand: true;
-    background-image: url("/home/snugcode/Images/AdeptusMechanicus-Tarrot.jpg", height);
-}
-
-inputbar{
-    background-color: rgba(255, 255, 255, 0.08);
-    text-color: #ffffff;
-    border: 2px;
-    border-color: rgba(255, 255, 255, 0.75);
-    border-radius: 5px;
-    padding: 9px 12px;
-}
-
-listview{
-    width: 620px;
-    height: 782px;
-    expand: true;
-    background-color: #000000;
-    scrollbar: false;
-    lines: 15;
+inputbar {
+    padding:           14px 18px;
+    spacing:           10px;
+    children:          [ "prompt", "entry" ];
+    background-color:  transparent;
 }
 
 prompt {
-    text-color: #ffffff;
+    font:              "0xProto Nerd Font Mono 15";
+    text-color:        rgba(255, 255, 255, 0.4);
+    vertical-align:    0.5;
+    expand:            false;
 }
 
 entry {
-    placeholder: "";
+    font:              "Inter 15";
+    text-color:        #FFFFFF;
+    placeholder:       "Search apps...";
+    placeholder-color: rgba(255, 255, 255, 0.3);
+    vertical-align:    0.5;
+    expand:            true;
+    cursor:            text;
+}
+
+separator {
+    height:            1px;
+    expand:            false;
+    background-color:  rgba(255, 255, 255, 0.1);
+    margin:            0px 14px;
+}
+
+listview {
+    padding:           8px 0px;
+    scrollbar:         false;
+    lines:             8;
+    spacing:           0px;
+    fixed-height:      false;
+    background-color:  transparent;
 }
 
 element {
-    orientation: horizontal;
-    spacing: 5px;
-    padding: 0px 0px 0px 14px;
+    padding:           9px 14px;
+    spacing:           12px;
+    border-radius:     10px;
+    margin:            2px 8px;
+    orientation:       horizontal;
+    children:          [ element-icon, element-text ];
+    background-color:  transparent;
+    cursor:            pointer;
+}
 
-    children: [element-text, element-icon];
+element normal.normal {
+    background-color:  transparent;
+}
+
+element selected.normal {
+    background-color:  rgba(255, 255, 255, 0.1);
+}
+
+element alternate.normal {
+    background-color:  transparent;
+}
+
+element-icon {
+    size:              26px;
+    vertical-align:    0.5;
+    background-color:  transparent;
 }
 
 element-text {
-    vertical-align: 0.5;
-}
-
-element-icon{
-    size: 2.5em;
+    font:              "Inter 13";
+    text-color:        #FFFFFF;
+    vertical-align:    0.5;
+    background-color:  transparent;
+    highlight:         bold rgba(255, 255, 255, 0.9);
 }
