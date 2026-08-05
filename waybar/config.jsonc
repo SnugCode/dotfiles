@@ -29,14 +29,14 @@
     "hyprland/window": {
         "format": "{class}  {title}",
         "rewrite": {
-            "firefox  (.*)": "󰈹  $1",
-            "kitty  (.*)": "  $1",
-            "codium  (.*)": "󰨞  $1",
-            "Cider  (.*)": "󰎆  $1",
-            "org\\.kde\\.dolphin  (.*)": "󰉋  $1"
+            "firefox  (.*)": "󰈹  Firefox",
+            "kitty  (.*)": "  Terminal",
+            "codium  (.*)": "󰨞  VSCodium",
+            "Cider  (.*)": "󰍎  Cider",
+            "org\\.kde\\.dolphin  (.*)": "󰉋  Finder"
         },
         "separate-outputs": true,
-        "max-length": 50
+        "max-length": 30
     },
     "clock": {
         "timezone": "Australia/Melbourne",
