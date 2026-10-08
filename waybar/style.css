@@ -9,15 +9,16 @@
 
 window {
 	font-weight: 500;
+	background: transparent;
 }
 
 window#waybar {
 	padding: 0;
 	margin: 0;
 	border-radius: 14px;
-	background-color: rgba(18, 18, 28, 0.3);
-	border: 1px solid rgba(255, 255, 255, 0.22);
-	box-shadow: 0 6px 28px rgba(0, 0, 0, 0.35);
+	background-color: rgba(6, 6, 14, 0.72);
+	border: 1px solid rgba(255, 255, 255, 0.55);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
 }
 
 /* Workspaces */
@@ -74,7 +75,8 @@ window#waybar {
 #custom-network,
 #custom-media,
 #custom-pipewire,
-#battery {
+#battery,
+#custom-updates {
 	margin: 0 6px;
 	min-width: 26px;
 	padding: 0;
@@ -84,6 +86,12 @@ window#waybar {
 	font-family: "Inter", sans-serif;
 	font-weight: 500;
 	letter-spacing: 0.02em;
+}
+
+#custom-separator {
+	color: #FFFFFF;
+	margin: 0 2px;
+	font-size: 14px;
 }
 
 #custom-network {
@@ -159,4 +167,14 @@ window#waybar {
 	animation-timing-function: linear;
 	animation-iteration-count: infinite;
 	animation-direction: alternate;
+}
+
+#custom-updates {
+	font-family: "0xProto Nerd Font Mono";
+	font-size: 15px;
+	color: #ffffff;
+}
+
+#custom-updates.pending {
+	color: #FF9800;
 }

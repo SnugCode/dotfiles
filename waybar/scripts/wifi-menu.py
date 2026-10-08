@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import fcntl
+import os
 import re
 import signal
 import subprocess
@@ -14,6 +15,15 @@ from gi.repository import Gdk, GLib, Gtk, Pango  # noqa: E402
 
 
 LOCK_PATH = "/tmp/waybar-wifi-menu.lock"
+VPN_CONNECT_SCRIPT = os.path.expanduser("~/.config/eww/scripts/vpn-connect.sh")
+VPN_TOGGLE_SCRIPT  = os.path.expanduser("~/.config/eww/scripts/vpn-toggle.sh")
+
+VPN_COUNTRIES = [
+    ("Streaming", ["US", "CA", "JP"]),
+    ("Torrenting", ["SG", "RO", "ES"]),
+    ("Privacy",    ["CH", "IS", "PA"]),
+    ("Misc",       ["LK", "PG", "NZ", "AU"]),
+]
 
 
 def run(*args):
@@ -110,6 +120,26 @@ def wifi_networks():
     return networks
 
 
+def vpn_active():
+    result = run(
+        "nmcli", "-t", "--escape", "yes",
+        "-f", "NAME,TYPE,DEVICE",
+        "connection", "show", "--active",
+    )
+    for line in result.stdout.splitlines():
+        fields = split_nmcli_line(line)
+        if len(fields) < 3:
+            continue
+        name, conn_type, device = fields[:3]
+        if (
+            conn_type in {"vpn", "wireguard"}
+            or re.match(r"^(tun|wg|ppp)", device)
+            or "proton" in name.lower()
+        ):
+            return name
+    return None
+
+
 def signal_icon(signal_strength):
     try:
         signal_value = int(signal_strength)
@@ -196,8 +226,35 @@ class WifiMenu(Gtk.Window):
             background: rgba(255, 255, 255, 0.2);
         }
 
+        button:disabled {
+            color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
         separator {
             background: rgba(255, 255, 255, 0.12);
+        }
+
+        .vpn-icon {
+            font-family: "0xProto Nerd Font Mono";
+            font-size: 20px;
+        }
+
+        .vpn-connected {
+            color: #4CAF50;
+        }
+
+        .country-btn {
+            min-height: 24px;
+            padding: 0 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .section-label {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 11px;
+            font-weight: 600;
         }
         """
         provider = Gtk.CssProvider()
@@ -231,11 +288,6 @@ class WifiMenu(Gtk.Window):
         header.pack_start(power, False, False, 0)
         self.root.pack_start(header, False, False, 0)
 
-        status = Gtk.Label(label=self.status_text(enabled, device))
-        status.set_halign(Gtk.Align.START)
-        status.get_style_context().add_class("network-status")
-        self.root.pack_start(status, False, False, 0)
-
         separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         self.root.pack_start(separator, False, False, 0)
 
@@ -265,16 +317,65 @@ class WifiMenu(Gtk.Window):
         footer.pack_start(manager, True, True, 0)
         self.root.pack_start(footer, False, False, 0)
 
-        self.show_all()
+        # ── VPN section ──────────────────────────────────────────────
+        self.root.pack_start(
+            Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 0
+        )
 
-    def status_text(self, enabled, device):
-        if not enabled:
-            return "Disabled"
-        if device["state"] == "connected" and device["connection"]:
-            return f"Connected to {device['connection']}"
-        if device["state"]:
-            return device["state"].replace("-", " ").title()
-        return "No Wi-Fi adapter"
+        active_vpn = vpn_active()
+
+        vpn_header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        vpn_icon = Gtk.Label(label="" if active_vpn else "")
+        vpn_icon.get_style_context().add_class("vpn-icon")
+        if active_vpn:
+            vpn_icon.get_style_context().add_class("vpn-connected")
+        vpn_header.pack_start(vpn_icon, False, False, 0)
+
+        vpn_title = Gtk.Label(label="ProtonVPN")
+        vpn_title.get_style_context().add_class("title")
+        vpn_title.set_halign(Gtk.Align.START)
+        vpn_header.pack_start(vpn_title, True, True, 0)
+        self.root.pack_start(vpn_header, False, False, 0)
+
+        if active_vpn:
+            conn_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            conn_row.set_size_request(300, -1)
+            conn_name = Gtk.Label(label=active_vpn)
+            conn_name.set_halign(Gtk.Align.START)
+            conn_name.set_ellipsize(Pango.EllipsizeMode.END)
+            conn_name.get_style_context().add_class("network-name")
+            conn_row.pack_start(conn_name, True, True, 0)
+
+            disc_btn = Gtk.Button(label="Disconnect")
+            disc_btn.connect("clicked", self.vpn_disconnect)
+            conn_row.pack_start(disc_btn, False, False, 0)
+            self.root.pack_start(conn_row, False, False, 0)
+        else:
+            quick = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+            fastest_btn = Gtk.Button(label="Fastest")
+            fastest_btn.connect("clicked", self.vpn_connect, "fastest")
+            quick.pack_start(fastest_btn, True, True, 0)
+
+            p2p_btn = Gtk.Button(label="P2P")
+            p2p_btn.connect("clicked", self.vpn_connect, "p2p")
+            quick.pack_start(p2p_btn, True, True, 0)
+            self.root.pack_start(quick, False, False, 0)
+
+            for label, countries in VPN_COUNTRIES:
+                cat_label = Gtk.Label(label=label)
+                cat_label.set_halign(Gtk.Align.START)
+                cat_label.get_style_context().add_class("section-label")
+                self.root.pack_start(cat_label, False, False, 0)
+
+                row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+                for cc in countries:
+                    btn = Gtk.Button(label=cc)
+                    btn.get_style_context().add_class("country-btn")
+                    btn.connect("clicked", self.vpn_connect, cc)
+                    row.pack_start(btn, True, True, 0)
+                self.root.pack_start(row, False, False, 0)
+
+        self.show_all()
 
     def network_row(self, network, device):
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
@@ -284,32 +385,17 @@ class WifiMenu(Gtk.Window):
         icon.get_style_context().add_class("wifi-icon")
         row.pack_start(icon, False, False, 0)
 
-        labels = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         name = Gtk.Label(label=network["ssid"])
         name.set_halign(Gtk.Align.START)
         name.set_ellipsize(Pango.EllipsizeMode.END)
         name.get_style_context().add_class("network-name")
-        labels.pack_start(name, False, False, 0)
-
-        detail = self.network_detail(network)
-        status = Gtk.Label(label=detail)
-        status.set_halign(Gtk.Align.START)
-        status.get_style_context().add_class("network-status")
-        labels.pack_start(status, False, False, 0)
-        row.pack_start(labels, True, True, 0)
+        row.pack_start(name, True, True, 0)
 
         action = Gtk.Button(label=self.action_label(network))
         action.connect("clicked", self.on_network_action, network, device)
         row.pack_start(action, False, False, 0)
 
         return row
-
-    def network_detail(self, network):
-        if network["active"]:
-            return f"Connected · {network['signal']}%"
-        if network["known"]:
-            return f"Known · {network['signal']}%"
-        return f"{network['security']} · {network['signal']}%"
 
     def action_label(self, network):
         if network["active"]:
@@ -318,29 +404,45 @@ class WifiMenu(Gtk.Window):
             return "Connect"
         return "Join..."
 
+    def vpn_connect(self, _button, arg):
+        self.mark_active()
+        subprocess.Popen([VPN_CONNECT_SCRIPT, arg])
+        Gtk.main_quit()
+
+    def vpn_disconnect(self, _button):
+        self.mark_active()
+        subprocess.Popen([VPN_TOGGLE_SCRIPT, "true"])
+        Gtk.main_quit()
+
     def on_power_changed(self, switch, _param):
         self.mark_active()
         state = "on" if switch.get_active() else "off"
         run("nmcli", "radio", "wifi", state)
         GLib.timeout_add(800, self.refresh)
 
-    def on_network_action(self, _button, network, device):
+    def on_network_action(self, button, network, device):
         self.mark_active()
         if network["active"]:
+            button.set_label("Disconnecting…")
+            button.set_sensitive(False)
             if device["name"]:
                 run("nmcli", "device", "disconnect", device["name"])
             GLib.timeout_add(800, self.refresh)
             return
 
         if network["known"]:
+            button.set_label("Connecting…")
+            button.set_sensitive(False)
             run("nmcli", "connection", "up", "id", network["ssid"])
             GLib.timeout_add(1200, self.refresh)
             return
 
         self.open_manager()
 
-    def refresh_scan(self, _button):
+    def refresh_scan(self, button):
         self.mark_active()
+        button.set_label("Scanning…")
+        button.set_sensitive(False)
         run("nmcli", "device", "wifi", "rescan")
         GLib.timeout_add(1200, self.refresh)
 
@@ -378,7 +480,7 @@ class WifiMenu(Gtk.Window):
 
         width, _height = self.get_size()
         self.move(
-            geometry.x + geometry.width - width - 12,
+            geometry.x + geometry.width - width - 16,
             geometry.y + 34,
         )
         self.present()

@@ -374,18 +374,10 @@ class BluetoothMenu(Gtk.Window):
         ls_icon.get_style_context().add_class("localsend-icon")
         ls_header.pack_start(ls_icon, False, False, 0)
 
-        ls_labels = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         ls_title = Gtk.Label(label="LocalSend")
         ls_title.get_style_context().add_class("title")
         ls_title.set_halign(Gtk.Align.START)
-        ls_labels.pack_start(ls_title, False, False, 0)
-        ls_status = Gtk.Label(label="Running" if ls_running else "Stopped")
-        ls_status.set_halign(Gtk.Align.START)
-        ls_status.get_style_context().add_class("device-status")
-        if ls_running:
-            ls_status.get_style_context().add_class("status-connected")
-        ls_labels.pack_start(ls_status, False, False, 0)
-        ls_header.pack_start(ls_labels, True, True, 0)
+        ls_header.pack_start(ls_title, True, True, 0)
 
         open_ls = Gtk.Button(label="Open")
         open_ls.connect("clicked", self.open_localsend)
@@ -415,20 +407,6 @@ class BluetoothMenu(Gtk.Window):
         name.get_style_context().add_class("device-name")
         labels.pack_start(name, False, False, 0)
 
-        if device["connected"]:
-            parts = ["● Connected"]
-            if "battery" in device:
-                parts.append(f"{device['battery']}%")
-            status_text = " · ".join(parts)
-        else:
-            status_text = "○ Paired"
-
-        status = Gtk.Label(label=status_text)
-        status.set_halign(Gtk.Align.START)
-        status.get_style_context().add_class("device-status")
-        if device["connected"]:
-            status.get_style_context().add_class("status-connected")
-        labels.pack_start(status, False, False, 0)
         row.pack_start(labels, True, True, 0)
 
         action = Gtk.Button(label="Disconnect" if device["connected"] else "Connect")
@@ -520,7 +498,7 @@ class BluetoothMenu(Gtk.Window):
         monitor = display.get_primary_monitor() or display.get_monitor(0)
         geometry = monitor.get_geometry()
         width, _height = self.get_size()
-        self.move(geometry.x + geometry.width - width - 12, geometry.y + 34)
+        self.move(geometry.x + geometry.width - width - 16, geometry.y + 34)
         self.present()
 
 

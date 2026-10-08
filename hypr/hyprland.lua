@@ -45,6 +45,7 @@ hl.on("hyprland.start", function()
     -- DE
     hl.exec_cmd("hyprpaper")
     hl.exec_cmd("waybar")
+    hl.exec_cmd("~/.config/waybar/scripts/autohide.sh")
     hl.exec_cmd("dunst")
     hl.exec_cmd("~/.config/hypr/scripts/display-mode.sh watch")
 
@@ -88,11 +89,11 @@ hl.config({
         gaps_in  = 2,
         gaps_out = 6,
 
-        border_size = 2,
+        border_size = 1,
 
         col = {
-            active_border   = { colors = { "rgba(33ccffee)", "rgba(00ff99ee)" }, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = "rgba(ffffffcc)",
+            inactive_border = "rgba(ffffff28)",
         },
 
         resize_on_border = false,
@@ -242,9 +243,9 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + equal", hl.dsp.exec_cmd("rofi -show calc -no-show-match -no-sort"))
 hl.bind(mainMod .. " + C",     hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + X",     hl.dsp.exec_cmd(browser))
-hl.bind(mainMod .. " + B",     hl.dsp.exec_cmd(browser))
-hl.bind(mainMod .. " + I",     hl.dsp.exec_cmd("codium"))
-hl.bind(mainMod .. " + N",     hl.dsp.exec_cmd("cider"))
+hl.bind(mainMod .. " + B",     hl.dsp.exec_cmd("pidof firefox > /dev/null && hyprctl dispatch focuswindow class:firefox || firefox"))
+hl.bind(mainMod .. " + I",     hl.dsp.exec_cmd("pidof codium > /dev/null && hyprctl dispatch focuswindow class:codium || codium"))
+hl.bind(mainMod .. " + N",     hl.dsp.exec_cmd("pgrep -i cider > /dev/null || cider & disown; hyprctl dispatch togglespecialworkspace music"))
 
 -- Clipboard history
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd('cliphist list | rofi -dmenu -display-columns -p "Search Clipboard" | cliphist decode | wl-copy'))
@@ -287,6 +288,9 @@ hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_S
 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/waybar/scripts/brightness-slider.py --osd up"),   { locked = true, repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/waybar/scripts/brightness-slider.py --osd down"), { locked = true, repeating = true })
 
+-- Keyboard backlight
+hl.bind("F11", hl.dsp.exec_cmd("~/.config/scripts/kbd-backlight-toggle.sh"), { locked = true })
+
 -- Media
 hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
@@ -303,10 +307,12 @@ hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("~/.config/hypr/scripts/display
 -------------------
 
 hl.layer_rule({
-    name        = "waybar-blur",
-    match       = { namespace = "waybar" },
-    blur        = true,
-    blur_popups = true,
+    name         = "waybar-blur",
+    match        = { namespace = "waybar" },
+    blur         = true,
+    blur_popups  = true,
+    ignore_alpha = 0.05,
+    animation    = "slide",
 })
 
 hl.layer_rule({
@@ -358,4 +364,11 @@ hl.window_rule({
     name      = "codium-workspace",
     match     = { class = "^codium$" },
     workspace = "2",
+})
+
+hl.window_rule({
+    name      = "cider-scratchpad",
+    match     = { class = "^Cider$" },
+    workspace = "special:music",
+    float     = true,
 })

@@ -12,7 +12,7 @@ vpn_on=false
 protonvpn status 2>/dev/null | grep -q "^Status: Connected" && vpn_on=true
 
 wifi_icon=$''
-vpn_icon=$''
+vpn_icon=$'\U000F030B'
 no_wifi=$'\U000f092d'
 
 if [[ "$wifi_on" != "true" ]]; then

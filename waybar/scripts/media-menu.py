@@ -386,7 +386,7 @@ class MediaMenu(Gtk.Window):
 
         width, _height = self.get_size()
         self.move(
-            geometry.x + geometry.width - width - 12,
+            geometry.x + geometry.width - width - 16,
             geometry.y + 34,
         )
         self.present()
