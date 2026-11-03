@@ -270,6 +270,17 @@ class BluetoothMenu(Gtk.Window):
             background: rgba(255, 255, 255, 0.2);
         }
 
+        button.bluetooth-title {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        button.bluetooth-title:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         button:disabled {
             color: rgba(255, 255, 255, 0.3);
             background: rgba(255, 255, 255, 0.06);
@@ -334,7 +345,13 @@ class BluetoothMenu(Gtk.Window):
         title = Gtk.Label(label="Bluetooth")
         title.get_style_context().add_class("title")
         title.set_halign(Gtk.Align.START)
-        header.pack_start(title, True, True, 0)
+        title_button = Gtk.Button()
+        title_button.get_style_context().add_class("bluetooth-title")
+        title_button.set_relief(Gtk.ReliefStyle.NONE)
+        title_button.set_tooltip_text("Open Bluetooth Manager")
+        title_button.add(title)
+        title_button.connect("clicked", self.open_bluetooth_manager)
+        header.pack_start(title_button, True, True, 0)
 
         power = Gtk.Switch()
         power.set_active(powered)
@@ -416,6 +433,11 @@ class BluetoothMenu(Gtk.Window):
         row.pack_start(action, False, False, 0)
 
         return row
+
+    def open_bluetooth_manager(self, _button):
+        self.mark_active()
+        subprocess.Popen(["blueman-manager"])
+        Gtk.main_quit()
 
     def on_power_changed(self, switch, _param):
         self.mark_active()

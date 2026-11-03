@@ -5,6 +5,33 @@ for a Hyprland desktop. The bar is a detached dark top bar with workspace
 buttons on the left, a centered clock, and network/Bluetooth/LocalSend/audio,
 media, and battery controls on the right.
 
+## Audio, charging, and notifications
+
+Click the volume icon to choose an available output. Selecting an output sets
+the default and moves currently playing apps to it. Connected Bluetooth
+headphones appear automatically; use **Connect Bluetooth headphones…** to open
+Blueman for devices that are not connected. Volume-key presses retain the compact
+volume display.
+
+The battery popup includes a **Charging limit** control from 50–100%. Click
+**Apply** and authenticate to change it. Charging starts five percentage points
+below the chosen limit. The root-owned `/usr/local/bin/waybar-charge-limit`
+helper uses TLP, verifies the hardware values, and saves them in
+`/etc/tlp.d/99-waybar-charge-limit.conf` for subsequent boots. The helper source
+is `~/.local/share/waybar/waybar-charge-limit`. Changing the stop limit does not
+force an already-charged battery to discharge.
+
+Codex notifications use separate question and completion icons. Left-clicking an
+actionable notification invokes its action and closes it; for Codex, this focuses
+the most recently used VSCodium window. Notifications are suppressed while
+VSCodium is already focused. New prompt hooks in `~/.codex/hooks.json` still need
+to be trusted through Codex's `/hooks` screen before they can run.
+
+Popup script changes apply the next time each popup opens. Reload Dunst with
+`dunstctl reload` to apply notification styling and mouse actions. Waybar's
+`full-at` is 100 so the reported capacity stays accurate at any charging limit;
+this configuration change takes effect on the next Waybar restart.
+
 ## Files
 
 - `config.jsonc` - Waybar layout and module configuration

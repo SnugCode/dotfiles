@@ -5,6 +5,8 @@ import os
 import signal
 import subprocess
 import time
+import threading
+from pathlib import Path
 
 import gi
 
@@ -16,6 +18,8 @@ from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 LOCK_PATH = "/tmp/waybar-battery-menu.lock"
 PROFILE_FILE = os.path.expanduser("~/.local/state/power-profile")
 PROFILE_SCRIPT = os.path.expanduser("~/.config/eww/scripts/battery-profile.sh")
+CHARGE_HELPER = "/usr/local/bin/waybar-charge-limit"
+CHARGE_LIMIT = Path("/sys/class/power_supply/BAT0/charge_control_end_threshold")
 
 PROFILES = [
     {"id": "normal",  "icon": "󰓡", "name": "Normal",  "desc": "Balanced power"},
@@ -68,6 +72,7 @@ class BatteryMenu(Gtk.Window):
         super().__init__(title="Battery")
 
         self.last_activity = time.monotonic()
+        self.applying_limit = False
 
         self.set_decorated(False)
         self.set_resizable(False)
@@ -231,7 +236,64 @@ class BatteryMenu(Gtk.Window):
             btn.connect("clicked", self.on_profile_clicked, p["id"])
             self.root.pack_start(btn, False, False, 0)
 
+        self.root.pack_start(Gtk.Separator(), False, False, 0)
+        title = Gtk.Label(label="Charging limit", xalign=0)
+        title.get_style_context().add_class("title")
+        self.root.pack_start(title, False, False, 0)
+        self.charge_status = Gtk.Label(xalign=0)
+        self.charge_status.set_line_wrap(True)
+        self.charge_status.set_max_width_chars(42)
+        try:
+            limit = int(CHARGE_LIMIT.read_text().strip())
+            self.limit_control = Gtk.SpinButton.new_with_range(50, 100, 5)
+            self.limit_control.set_value(limit)
+            self.limit_control.connect("value-changed", self.mark_active)
+            row = Gtk.Box(spacing=8)
+            row.pack_start(self.limit_control, True, True, 0)
+            row.pack_start(Gtk.Label(label="%"), False, False, 0)
+            self.apply_button = Gtk.Button(label="Apply")
+            self.apply_button.connect("clicked", self.on_limit_clicked)
+            self.apply_button.set_sensitive(Path(CHARGE_HELPER).is_file())
+            row.pack_start(self.apply_button, False, False, 0)
+            self.root.pack_start(row, False, False, 0)
+            self.charge_status.set_text(f"Currently stops at {limit}%. Changes require authentication.")
+        except (OSError, ValueError):
+            self.charge_status.set_text("Charging limits are not available on this battery.")
+        self.root.pack_start(self.charge_status, False, False, 0)
+
         self.show_all()
+        return GLib.SOURCE_REMOVE
+
+    def on_limit_clicked(self, _button):
+        self.mark_active()
+        limit = self.limit_control.get_value_as_int()
+        self.applying_limit = True
+        self.root.set_sensitive(False)
+        self.charge_status.set_text("Authenticate to save the charging limit…")
+        def work():
+            try:
+                result = subprocess.run(["pkexec", CHARGE_HELPER, str(limit)],
+                                        capture_output=True, text=True, timeout=120)
+                if result.returncode == 0:
+                    message = result.stdout.strip()
+                elif result.returncode in (126, 127):
+                    message = "Authentication cancelled or denied. Limit was not changed."
+                else:
+                    message = result.stderr.strip() or "Could not change the charging limit."
+            except (OSError, subprocess.SubprocessError) as error:
+                message = str(error)
+            GLib.idle_add(self.limit_applied, message)
+        threading.Thread(target=work, daemon=True).start()
+
+    def limit_applied(self, message):
+        self.applying_limit = False
+        self.mark_active()
+        self.root.set_sensitive(True)
+        try:
+            self.limit_control.set_value(int(CHARGE_LIMIT.read_text().strip()))
+        except (OSError, ValueError):
+            pass
+        self.charge_status.set_text(message)
         return GLib.SOURCE_REMOVE
 
     def on_profile_clicked(self, _button, profile_id):
@@ -249,6 +311,8 @@ class BatteryMenu(Gtk.Window):
         return False
 
     def close_if_idle(self):
+        if self.applying_limit:
+            return GLib.SOURCE_CONTINUE
         if time.monotonic() - self.last_activity > 15:
             Gtk.main_quit()
             return GLib.SOURCE_REMOVE

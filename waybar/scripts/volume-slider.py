@@ -7,6 +7,8 @@ import fcntl
 import sys
 import time
 import math
+import json
+import threading
 
 import gi
 
@@ -31,7 +33,30 @@ PILL_PAD_Y    = 14
 
 
 def run(*args):
-    return subprocess.run(args, check=False, capture_output=True, text=True)
+    return subprocess.run(args, check=False, capture_output=True, text=True, timeout=5)
+
+
+def audio_outputs():
+    result = run("pactl", "--format=json", "list", "sinks")
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip() or "Audio service unavailable")
+    return json.loads(result.stdout), run("pactl", "get-default-sink").stdout.strip()
+
+
+def select_output(name):
+    result = run("pactl", "set-default-sink", name)
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip() or "Could not select output")
+    result = run("pactl", "--format=json", "list", "sink-inputs")
+    if result.returncode:
+        raise RuntimeError("Output selected; could not read playing apps")
+    failed = []
+    for stream in json.loads(result.stdout):
+        moved = run("pactl", "move-sink-input", str(stream["index"]), name)
+        if moved.returncode:
+            failed.append(str(stream["index"]))
+    if failed:
+        raise RuntimeError("Output selected; some apps could not be moved. Restart their playback.")
 
 
 def current_volume():
@@ -185,6 +210,24 @@ class VolumeOSD(Gtk.Window):
 
         self._sync_display()
 
+        if not osd_mode:
+            outer.pack_start(Gtk.Separator(), False, False, 0)
+            heading = Gtk.Label(label="Audio output", xalign=0)
+            outer.pack_start(heading, False, False, 0)
+            self.output_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+            outer.pack_start(self.output_box, False, False, 0)
+            self.output_status = Gtk.Label(xalign=0)
+            self.output_status.set_line_wrap(True)
+            self.output_status.set_max_width_chars(45)
+            outer.pack_start(self.output_status, False, False, 0)
+            bluetooth = Gtk.Button(label="Connect Bluetooth headphones…")
+            bluetooth.connect("clicked", self.open_bluetooth)
+            outer.pack_start(bluetooth, False, False, 0)
+            self.outputs_busy = False
+            self.output_signature = None
+            self.refresh_outputs()
+            GLib.timeout_add_seconds(2, self.refresh_outputs)
+
         css = b"""
         window {
             background: rgba(28, 28, 30, 0.90);
@@ -202,6 +245,11 @@ class VolumeOSD(Gtk.Window):
             font-weight: 600;
             color: rgba(255, 255, 255, 0.50);
         }
+        label { color: #ffffff; }
+        button { padding: 7px 10px; border-radius: 7px; color: #ffffff;
+                 background: rgba(255,255,255,0.08); }
+        button:hover { background: rgba(255,255,255,0.18); }
+        button.active { background: rgba(80,150,240,0.3); }
         """
         provider = Gtk.CssProvider()
         provider.load_from_data(css)
@@ -216,6 +264,72 @@ class VolumeOSD(Gtk.Window):
             GLib.timeout_add(100, self.sync_osd_volume)
 
     # ── display sync ────────────────────────────────────────────────
+
+    def open_bluetooth(self, _button):
+        self.mark_active()
+        subprocess.Popen(["blueman-manager"])
+
+    def refresh_outputs(self):
+        if self.outputs_busy:
+            return GLib.SOURCE_CONTINUE
+        self.outputs_busy = True
+        def work():
+            try:
+                sinks, default = audio_outputs()
+                GLib.idle_add(self.show_outputs, sinks, default, None)
+            except (OSError, ValueError, subprocess.SubprocessError, RuntimeError) as error:
+                GLib.idle_add(self.show_outputs, [], "", str(error))
+        threading.Thread(target=work, daemon=True).start()
+        return GLib.SOURCE_CONTINUE
+
+    def show_outputs(self, sinks, default, error):
+        self.outputs_busy = False
+        if error:
+            self.output_status.set_text(error)
+            return GLib.SOURCE_REMOVE
+        signature = [(s["name"], s.get("description"), s["name"] == default) for s in sinks]
+        if signature != self.output_signature:
+            self.output_signature = signature
+            for child in self.output_box.get_children():
+                child.destroy()
+            for sink in sinks:
+                active = sink["name"] == default
+                button = Gtk.Button()
+                row = Gtk.Box(spacing=8)
+                icon = "audio-headphones" if "head" in sink.get("description", "").lower() or "airpod" in sink.get("description", "").lower() else "audio-speakers"
+                row.pack_start(Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON), False, False, 0)
+                row.pack_start(Gtk.Label(label=sink.get("description", sink["name"]), xalign=0), True, True, 0)
+                if active:
+                    row.pack_end(Gtk.Label(label="✓"), False, False, 0)
+                    button.get_style_context().add_class("active")
+                button.add(row)
+                button.connect("clicked", self.on_output_clicked, sink["name"])
+                self.output_box.pack_start(button, False, False, 0)
+            self.output_box.show_all()
+        self.last_volume, self.last_muted = current_volume(), is_muted()
+        self._sync_display()
+        return GLib.SOURCE_REMOVE
+
+    def on_output_clicked(self, _button, name):
+        self.mark_active()
+        self.output_box.set_sensitive(False)
+        self.output_status.set_text("Switching output…")
+        def work():
+            message = "Output selected"
+            try:
+                select_output(name)
+                refresh_waybar()
+            except (OSError, ValueError, subprocess.SubprocessError, RuntimeError) as error:
+                message = str(error)
+            GLib.idle_add(self.output_switched, message)
+        threading.Thread(target=work, daemon=True).start()
+
+    def output_switched(self, message):
+        self.mark_active()
+        self.output_box.set_sensitive(True)
+        self.output_status.set_text(message)
+        self.refresh_outputs()
+        return GLib.SOURCE_REMOVE
 
     def _sync_display(self):
         self.icon_label.set_text(volume_icon(self.last_volume, self.last_muted))

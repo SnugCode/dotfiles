@@ -70,7 +70,7 @@
     force_xwayland = false
 
     ### Mouse ###
-    mouse_left_click = close_current
+    mouse_left_click = do_action, close_current
     mouse_middle_click = do_action, close_current
     mouse_right_click = close_all
 
@@ -98,3 +98,19 @@
     frame_color = "#E05C5CFF"
     timeout = 0
     default_icon = dialog-warning
+
+[latest_per_app]
+    # Dunst replaces notifications with the same tag and application identity.
+    set_stack_tag = "latest-per-app"
+
+[codex_prompt]
+    appname = Codex
+    summary = "Prompt awaiting reply"
+    set_stack_tag = "codex-input"
+    frame_color = "#E8B44C"
+
+[codex_complete]
+    appname = Codex
+    summary = "Codex finished"
+    set_stack_tag = "codex-complete"
+    frame_color = "#69BFA0"

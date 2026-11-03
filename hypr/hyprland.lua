@@ -32,7 +32,7 @@ hl.config({
 ---------------------
 
 local terminal    = "kitty"
-local fileManager = "dolphin"
+local fileManager = "env QT_QPA_PLATFORMTHEME=kde dolphin"
 local menu        = "rofi -show drun"
 local browser     = "firefox"
 
@@ -208,6 +208,8 @@ hl.config({
 
         touchpad = {
             natural_scroll = true,
+            tap_to_click = true,
+            tap_button_map = "lrm",
         },
     },
 })

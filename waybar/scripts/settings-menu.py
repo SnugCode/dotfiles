@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import fcntl
+from pathlib import Path
 import signal
 import subprocess
-import threading
+import sys
 import time
 
 import gi
@@ -21,7 +22,7 @@ def run(*args):
 
 
 def notify(title, body, urgency="normal"):
-    run("notify-send", "-u", urgency, title, body)
+    run("notify-send", "-a", "System Update", "-u", urgency, title, body)
 
 
 def update_count():
@@ -199,23 +200,19 @@ class SettingsMenu(Gtk.Window):
         return btn
 
     def run_update(self, _button):
-        self.mark_active()
-        self.updating = True
-        notify("System Update", "Starting system update…")
-
-        def do_update():
-            result = subprocess.run(
-                ["pkexec", "pacman", "-Syu", "--noconfirm"],
-                capture_output=True,
-                text=True,
+        try:
+            subprocess.Popen(
+                [sys.executable, str(Path(__file__).with_name("system-update.py"))],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+                close_fds=True,
             )
-            self.updating = False
-            if result.returncode == 0:
-                GLib.idle_add(notify, "System Update", "Update complete.", "normal")
-            else:
-                GLib.idle_add(notify, "System Update", "Update failed.", "critical")
-
-        threading.Thread(target=do_update, daemon=True).start()
+        except OSError as error:
+            notify("System Update", f"Could not start update: {error}", "critical")
+            return
+        self.destroy()
         Gtk.main_quit()
 
     def restart(self, _button):
